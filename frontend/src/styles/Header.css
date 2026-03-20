@@ -1,0 +1,232 @@
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  padding: 15px 0;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+
+.logo span {
+  color: var(--primary);
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.search-container {
+  flex: 1;
+  max-width: 500px;
+  position: relative;
+  background: var(--bg-soft);
+  border-radius: var(--radius-md);
+  padding: 8px 15px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.search-container:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+  background: white;
+}
+
+.search-icon {
+  color: var(--text-light);
+  margin-right: 12px;
+}
+
+.search-bar {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-body);
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+}
+
+.nav-link {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-gradient);
+  transition: var(--transition);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+}
+
+.action-btns {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-icon-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-main);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+}
+
+.btn-icon-text:hover {
+  background: var(--bg-soft);
+  color: var(--primary);
+}
+
+.btn-register-header {
+  background-color: var(--primary);
+  color: white;
+  padding: 8px 18px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn-register-header:hover {
+  background-color: var(--primary-hover);
+}
+
+.cart-btn {
+  position: relative;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.cart-btn:hover {
+  color: var(--primary);
+}
+
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: var(--primary);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg-white);
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: none;
+}
+
+@media (max-width: 1024px) {
+  .nav-links, .btn-icon-text span, .btn-register-header {
+    display: none;
+  }
+  .mobile-menu-btn {
+    display: block;
+    color: var(--text-main);
+    z-index: 1001;
+  }
+  .search-container {
+    max-width: none;
+  }
+}
+
+.mobile-nav {
+  position: fixed;
+  top: 70px; /* Header height */
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 70px);
+  background-color: white;
+  z-index: 999;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.mobile-nav.active {
+  transform: translateX(0);
+}
+
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mobile-nav-link {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-main);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.mobile-nav-link:last-child {
+  border-bottom: none;
+}
+
+.mobile-divider {
+  margin: 10px 0;
+  border: none;
+  border-top: 2px solid var(--bg-soft);
+}
+
+@media (max-width: 640px) {
+  .search-container {
+    display: none;
+  }
+}

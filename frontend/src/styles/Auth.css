@@ -1,0 +1,111 @@
+.auth-container {
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background-color: var(--bg-light);
+}
+
+.auth-card {
+  background: white;
+  width: 100%;
+  max-width: 480px;
+  padding: 50px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.auth-tabs {
+  display: flex;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eee;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.auth-tab.active {
+  color: var(--primary);
+  border-bottom: 3px solid var(--primary);
+}
+
+.auth-form h2 {
+  margin-bottom: 25px;
+  font-size: 1.5rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  background: var(--bg-soft);
+  transition: var(--transition);
+}
+
+.form-group input:focus {
+  border-color: var(--primary);
+  outline: none;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+}
+
+.btn-auth-submit {
+  width: 100%;
+  padding: 16px;
+  background: var(--primary-gradient);
+  color: white;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: 15px;
+  box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
+}
+
+.logo span {
+  color: var(--primary);
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-auth-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(255, 107, 0, 0.3);
+  filter: brightness(1.1);
+}
+
+.otp-toggle {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
