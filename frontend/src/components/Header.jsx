@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 import '../styles/Header.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const { cartCount } = useCart();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -34,13 +36,13 @@ const Header = () => {
           </div>
           
           <div className="action-btns">
-            <div className="cart-btn">
+            <Link to="/checkout" className="cart-btn">
                <ShoppingCart size={22} />
-               <span className="cart-count">0</span>
-            </div>
-            <Link to="/login" className="btn-icon-text">
-              <User size={20} />
-              <span>Login</span>
+               {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+            </Link>
+            <Link to="/profile" className="btn-icon-text">
+               <User size={20} />
+               <span>Profile</span>
             </Link>
             <Link to="/register" className="btn-register-header">Register</Link>
           </div>

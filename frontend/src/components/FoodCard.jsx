@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Star, ShoppingCart, TrendingUp } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 const FoodCard = ({ item }) => {
   const { 
@@ -13,6 +14,7 @@ const FoodCard = ({ item }) => {
     spiceLevel, 
     isPopular 
   } = item;
+  const { addToCart } = useCart();
 
   return (
     <motion.div 
@@ -64,7 +66,7 @@ const FoodCard = ({ item }) => {
           <div className="food-card-price">₹{price}</div>
         </div>
 
-        <button className="add-to-cart-btn">
+        <button className="add-to-cart-btn" onClick={() => addToCart(item)}>
           <ShoppingCart size={18} />
           <span>Add to Cart</span>
         </button>

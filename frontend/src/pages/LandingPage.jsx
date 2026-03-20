@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, UtensilsCrossed, Truck, ShieldCheck, Star, ShoppingCart } from 'lucide-react';
 import { categoryService } from '../services/userService';
 import UttarKarnatakaFood from '../components/UttarKarnatakaFood';
+import { useCart } from '../context/CartContext';
 import '../styles/LandingPage.css';
 
 // Import Authentic assets
@@ -31,6 +32,9 @@ const bestSellers = [
 
 const LandingPage = () => {
   const [dynamicCategories, setDynamicCategories] = React.useState([]);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [filteredProducts, setFilteredProducts] = React.useState(bestSellers);
+  const { addToCart } = useCart();
 
   React.useEffect(() => {
     categoryService.getStats()
@@ -46,6 +50,15 @@ const LandingPage = () => {
         setDynamicCategories(categories);
       });
   }, []);
+
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    const filtered = bestSellers.filter(p => 
+      p.name.toLowerCase().includes(query)
+    );
+    setFilteredProducts(filtered);
+  };
 
   const displayCategories = dynamicCategories.length > 0 ? dynamicCategories : categories;
 
@@ -65,7 +78,12 @@ const LandingPage = () => {
           
           <div className="hero-search">
             <Search className="hero-search-icon" size={24} />
-            <input type="text" placeholder="What are you craving today?" />
+            <input 
+              type="text" 
+              placeholder="What are you craving today?" 
+              value={searchQuery}
+              onChange={handleSearch}
+            />
             <button className="btn-primary">Find Food</button>
           </div>
         </motion.div>
@@ -122,7 +140,7 @@ const LandingPage = () => {
           <button className="view-all">View All</button>
         </div>
         <div className="products-grid">
-          {bestSellers.map((product, i) => (
+          {filteredProducts.length > 0 ? filteredProducts.map((product, i) => (
             <motion.div 
               key={product.id} 
               className="product-card"
@@ -133,7 +151,7 @@ const LandingPage = () => {
             >
               <div className="product-img-wrapper">
                 <img src={product.img} alt={product.name} className="product-img" />
-                <span className="discount-badge">{product.discount}</span>
+                {product.discount && <span className="discount-badge">{product.discount}</span>}
               </div>
               <div className="product-info">
                 <div className="product-rating">
@@ -144,15 +162,19 @@ const LandingPage = () => {
                 <div className="product-footer">
                   <div className="price-tag">
                     <span className="current-price">₹{product.price}</span>
-                    <span className="old-price">₹{product.oldPrice}</span>
+                    {product.oldPrice && <span className="old-price">₹{product.oldPrice}</span>}
                   </div>
-                  <button className="add-to-cart">
+                  <button className="add-to-cart" onClick={() => addToCart(product)}>
                     <ShoppingCart size={18} />
                   </button>
                 </div>
               </div>
             </motion.div>
-          ))}
+          )) : (
+            <div className="no-results" style={{ gridColumn: '1/-1', textAlign: 'center', padding: '40px' }}>
+              <p>No products found matching "{searchQuery}"</p>
+            </div>
+          )}
         </div>
       </section>
       
