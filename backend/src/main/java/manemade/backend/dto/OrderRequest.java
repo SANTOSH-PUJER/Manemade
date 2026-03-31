@@ -1,10 +1,20 @@
 package manemade.backend.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public class OrderRequest {
+    @NotNull(message = "User id is required")
     private Long userId;
+
+    @NotNull(message = "Address id is required")
     private Long addressId;
+
+    @NotEmpty(message = "At least one order item is required")
+    @Valid
     private List<OrderItemRequest> items;
 
     public OrderRequest() {}
@@ -19,7 +29,10 @@ public class OrderRequest {
     public void setItems(List<OrderItemRequest> items) { this.items = items; }
 
     public static class OrderItemRequest {
+        @NotNull(message = "Item id is required")
         private Long itemId;
+
+        @Min(value = 1, message = "Quantity must be at least 1")
         private int quantity;
 
         public OrderItemRequest() {}

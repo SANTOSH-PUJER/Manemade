@@ -17,7 +17,7 @@ public class OrderService {
     private final AddressRepository addressRepository;
     private final ItemRepository itemRepository;
 
-    public OrderService(OrderRepository orderRepository, UserRepository userRepository, 
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository,
                         AddressRepository addressRepository, ItemRepository itemRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
@@ -29,9 +29,13 @@ public class OrderService {
     public OrderResponse placeOrder(OrderRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
+
         Address address = addressRepository.findById(request.getAddressId())
                 .orElseThrow(() -> new RuntimeException("Address not found"));
+
+        if (address.isDeleted() || address.getUser() == null || !address.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Address does not belong to the selected user");
+        }
 
         Order order = new Order();
         order.setUser(user);
@@ -42,28 +46,39 @@ public class OrderService {
         for (OrderRequest.OrderItemRequest itemReq : request.getItems()) {
             Item item = itemRepository.findById(itemReq.getItemId())
                     .orElseThrow(() -> new RuntimeException("Item not found: " + itemReq.getItemId()));
-            
+
+            if (!item.isAvailable()) {
+                throw new RuntimeException(item.getName() + " is currently unavailable");
+            }
+
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setItem(item);
             orderItem.setQuantity(itemReq.getQuantity());
             orderItem.setPrice(item.getPrice());
-            
+
             order.addOrderItem(orderItem);
             totalAmount += item.getPrice() * itemReq.getQuantity();
         }
 
         order.setTotalAmount(totalAmount);
         Order savedOrder = orderRepository.save(order);
-        
+
         return mapToResponse(savedOrder);
     }
 
     public List<OrderResponse> getUserOrders(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
+
         return orderRepository.findByUserOrderByCreatedTsDesc(user).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderResponse> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .sorted((o1, o2) -> o2.getCreatedTs().compareTo(o1.getCreatedTs()))
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -75,6 +90,8 @@ public class OrderService {
                 .addressId(order.getAddress().getId())
                 .totalAmount(order.getTotalAmount())
                 .status(order.getStatus())
+                .paymentMode(order.getPaymentMode())
+                .transactionId(order.getTransactionId())
                 .createdTs(order.getCreatedTs())
                 .items(order.getItems().stream().map(this::mapToOrderItemResponse).collect(Collectors.toList()))
                 .build();

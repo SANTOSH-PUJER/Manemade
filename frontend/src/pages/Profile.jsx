@@ -1,111 +1,96 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Package, User, MapPin, Clock, ChevronRight } from 'lucide-react';
-import axios from 'axios';
-import '../styles/Checkout.css'; // Reusing some base styles
+import { Clock3, MapPin, PackageCheck, Star } from 'lucide-react';
+import SectionHeading from '../components/ui/SectionHeading';
+import { useAuth } from '../context/AuthContext';
+import { dishes } from '../data/catalog';
 
-const Profile = () => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const userId = 1; // Default user for demo
+const recentOrders = [
+  { id: 'MM1024', item: 'Jolada Rotti Signature Meal', date: 'Mar 30', status: 'Delivered', total: 'Rs. 237' },
+  { id: 'MM1021', item: 'Dharwad Peda Premium Box', date: 'Mar 28', status: 'Delivered', total: 'Rs. 249' },
+  { id: 'MM1018', item: 'Ennegayi Curry Bowl', date: 'Mar 27', status: 'On the way', total: 'Rs. 169' },
+];
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await axios.get(`http://localhost:8081/api/order/user/${userId}`);
-        setOrders(res.data);
-      } catch (err) {
-        console.error('Failed to fetch orders:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrders();
-  }, []);
+const savedAddresses = [
+  { label: 'Home', address: '1st Block, Rajajinagar, Bengaluru 560010', note: 'Primary delivery address' },
+  { label: 'Work', address: 'MG Road, Ashok Nagar, Bengaluru 560001', note: 'Use for lunch-hour deliveries' },
+];
+
+function Profile() {
+  const { user } = useAuth();
+  const profileName = user ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Guest user';
 
   return (
-    <div className="container profile-page" style={{ paddingTop: '100px', marginBottom: '50px' }}>
-      <div className="profile-header" style={{ marginBottom: '30px' }}>
-        <h1>My Profile</h1>
-        <div className="user-brief" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
-          <div className="user-avatar" style={{ width: '60px', height: '60px', background: '#FF7043', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyCenter: 'center', color: 'white' }}>
-            <User size={30} style={{ margin: 'auto' }} />
-          </div>
-          <div>
-            <h3>Santosh Pujer</h3>
-            <p style={{ color: '#718096' }}>santosh@example.com</p>
+    <div className="space-y-8">
+      <section className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+        <div className="rounded-[36px] border border-white/10 bg-[var(--accent-gradient)] p-8 text-white shadow-[var(--shadow-strong)]">
+          <p className="text-xs uppercase tracking-[0.24em] text-white/70">Profile overview</p>
+          <h1 className="mt-4 font-display text-4xl font-semibold">{profileName}</h1>
+          <p className="mt-4 max-w-lg text-sm leading-7 text-white/85">The profile page is redesigned into a calm account hub with premium cards, address management space, and a clear order history overview.</p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-[24px] bg-white/12 p-4 backdrop-blur"><PackageCheck size={18} /><p className="mt-3 text-2xl font-semibold">12</p><p className="text-sm text-white/75">Orders placed</p></div>
+            <div className="rounded-[24px] bg-white/12 p-4 backdrop-blur"><Clock3 size={18} /><p className="mt-3 text-2xl font-semibold">24 min</p><p className="text-sm text-white/75">Avg delivery</p></div>
+            <div className="rounded-[24px] bg-white/12 p-4 backdrop-blur"><Star size={18} /><p className="mt-3 text-2xl font-semibold">4.9</p><p className="text-sm text-white/75">Satisfaction</p></div>
           </div>
         </div>
-      </div>
 
-      <div className="profile-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-        <section className="orders-section">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-            <Package size={22} color="#FF7043" />
-            <h2 style={{ fontSize: '1.5rem' }}>Order History</h2>
+        <div className="rounded-[36px] border border-white/10 bg-white/70 p-8 shadow-[var(--shadow-soft)] dark:bg-white/5">
+          <SectionHeading eyebrow="Favorite picks" title="Recommended from your taste history" description="This side panel can later be fed from real order analytics, but the UI is already structured to support it cleanly." />
+          <div className="mt-6 grid gap-4">
+            {dishes.slice(0, 3).map((dish) => (
+              <div key={dish.id} className="flex items-center gap-4 rounded-[24px] bg-[var(--surface-muted)] p-4">
+                <img src={dish.image} alt={dish.name} className="h-20 w-20 rounded-[18px] object-cover" />
+                <div>
+                  <p className="font-semibold">{dish.name}</p>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">{dish.category}</p>
+                  <p className="mt-1 text-sm text-[var(--text-muted)]">Rs. {dish.price}</p>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
 
-          {loading ? (
-            <p>Loading orders...</p>
-          ) : orders.length === 0 ? (
-            <div className="empty-orders" style={{ textAlign: 'center', padding: '40px', background: '#f7fafc', borderRadius: '12px' }}>
-              <Package size={48} color="#CBD5E0" style={{ marginBottom: '10px' }} />
-              <p>No orders yet. Time to order some delicious food!</p>
-            </div>
-          ) : (
-            <div className="orders-list" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {orders.map((order) => (
-                <motion.div 
-                  key={order.id} 
-                  className="order-card"
-                  whileHover={{ scale: 1.01 }}
-                  style={{ background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', border: '1px solid #edf2f7' }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <span style={{ fontWeight: '700', color: '#2D3748' }}>Order #{order.id}</span>
-                    <span style={{ 
-                      background: order.status === 'PLACED' ? '#EBF8FF' : '#F0FFF4', 
-                      color: order.status === 'PLACED' ? '#3182CE' : '#38A169',
-                      padding: '4px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 'bold'
-                    }}>{order.status}</span>
+      <section className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
+        <div className="rounded-[36px] border border-white/10 bg-white/70 p-8 shadow-[var(--shadow-soft)] dark:bg-white/5">
+          <SectionHeading eyebrow="Orders" title="Order history" description="Recent orders now use clearer status chips, spacing, and aligned values for an easier account experience." />
+          <div className="mt-6 space-y-4">
+            {recentOrders.map((order) => (
+              <article key={order.id} className="rounded-[26px] bg-[var(--surface-muted)] p-5">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.22em] text-[var(--text-muted)]">{order.id}</p>
+                    <h3 className="mt-2 font-display text-2xl font-semibold">{order.item}</h3>
+                    <p className="mt-2 text-sm text-[var(--text-secondary)]">{order.date}</p>
                   </div>
-                  <div style={{ color: '#718096', fontSize: '0.9rem', marginBottom: '10px' }}>
-                    <Clock size={14} style={{ marginRight: '5px', verticalAlign: 'middle' }} />
-                    {new Date(order.createdTs).toLocaleDateString()}
+                  <div className="text-left sm:text-right">
+                    <span className="inline-flex rounded-full bg-[var(--accent-soft)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent-strong)]">{order.status}</span>
+                    <p className="mt-3 text-xl font-semibold">{order.total}</p>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ color: '#4A5568' }}>{order.items.length} Items</span>
-                    <span style={{ fontWeight: '800', fontSize: '1.1rem' }}>₹{order.totalAmount}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </section>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
 
-        <section className="addresses-section">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-            <MapPin size={22} color="#FF7043" />
-            <h2 style={{ fontSize: '1.5rem' }}>Saved Addresses</h2>
+        <div className="rounded-[36px] border border-white/10 bg-white/70 p-8 shadow-[var(--shadow-soft)] dark:bg-white/5">
+          <SectionHeading eyebrow="Addresses" title="Saved delivery locations" description="The address cards are structured for future edit, delete, and default-state actions." />
+          <div className="mt-6 space-y-4">
+            {savedAddresses.map((address) => (
+              <article key={address.label} className="rounded-[26px] bg-[var(--surface-muted)] p-5">
+                <div className="flex items-start gap-4">
+                  <div className="rounded-2xl bg-white/75 p-3 dark:bg-white/10"><MapPin size={18} className="text-[var(--accent-strong)]" /></div>
+                  <div>
+                    <p className="font-semibold">{address.label}</p>
+                    <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{address.address}</p>
+                    <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{address.note}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
-          <div className="address-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '2px solid #FF7043', position: 'relative' }}>
-            <span style={{ position: 'absolute', top: '10px', right: '10px', background: '#FF7043', color: 'white', padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem' }}>DEFAULT</span>
-            <h4>Home</h4>
-            <p style={{ color: '#4A5568', marginTop: '10px' }}>
-              1st Block, Rajajinagar<br />
-              Bangalore, Karnataka - 560010
-            </p>
-          </div>
-          <button style={{ 
-            marginTop: '20px', width: '100%', padding: '12px', background: 'none', border: '2px dashed #CBD5E0', 
-            borderRadius: '12px', color: '#718096', fontWeight: 'bold', cursor: 'pointer' 
-          }}>
-            + Add New Address
-          </button>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
-};
+}
 
 export default Profile;

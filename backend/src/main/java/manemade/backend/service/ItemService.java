@@ -27,6 +27,18 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
+    public List<ItemResponse> searchItems(String query) {
+        return itemRepository.searchItems(query).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<ItemResponse> getAllItems() {
+        return itemRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     public ItemResponse createItem(Item item) {
         Item saved = itemRepository.save(item);
         return mapToResponse(saved);
@@ -41,6 +53,9 @@ public class ItemService {
                 .image(item.getImageUrl())
                 .categoryId(item.getCategory() != null ? item.getCategory().getId() : null)
                 .categoryName(item.getCategory() != null ? item.getCategory().getName() : null)
+                .isVeg(item.isVeg())
+                .spiceLevel(item.getSpiceLevel())
+                .isAvailable(item.isAvailable())
                 .build();
     }
 }

@@ -1,0 +1,24 @@
+2026-03-31 17:24:25.158107+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "users" not found (this database is empty); SQL statement:
+UPDATE users SET is_deleted = FALSE WHERE is_deleted IS NULL [42104-232]
+2026-03-31 17:24:25.178449+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "addresses" not found (this database is empty); SQL statement:
+UPDATE addresses SET is_default = FALSE WHERE is_default IS NULL [42104-232]
+2026-03-31 17:24:25.181990+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "addresses" not found (this database is empty); SQL statement:
+UPDATE addresses SET is_deleted = FALSE WHERE is_deleted IS NULL [42104-232]
+2026-03-31 17:24:25.189053+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "items" not found (this database is empty); SQL statement:
+UPDATE items SET slug = LOWER(REPLACE(name, ' ', '-')) WHERE slug IS NULL OR slug = '' [42104-232]
+2026-03-31 17:24:25.189053+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "items" not found (this database is empty); SQL statement:
+UPDATE items SET is_veg = TRUE WHERE is_veg IS NULL [42104-232]
+2026-03-31 17:24:25.190537+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "items" not found (this database is empty); SQL statement:
+UPDATE items SET spice_level = 1 WHERE spice_level IS NULL [42104-232]
+2026-03-31 17:24:25.190537+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "items" not found (this database is empty); SQL statement:
+UPDATE items SET is_available = TRUE WHERE is_available IS NULL [42104-232]
+2026-03-31 17:24:25.193278+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "orders" not found (this database is empty); SQL statement:
+UPDATE orders SET status = 'PLACED' WHERE status IS NULL OR status = '' [42104-232]

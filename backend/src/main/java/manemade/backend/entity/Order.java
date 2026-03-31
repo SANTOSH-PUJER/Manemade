@@ -28,6 +28,12 @@ public class Order {
     @Column(nullable = false)
     private String status; // PENDING, PLACED, CONFIRMED, DELIVERED, CANCELLED
 
+    @Column(name = "payment_mode")
+    private String paymentMode;
+
+    @Column(name = "transaction_id")
+    private String transactionId;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
@@ -55,6 +61,11 @@ public class Order {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getPaymentMode() { return paymentMode; }
+    public void setPaymentMode(String paymentMode) { this.paymentMode = paymentMode; }
+    public String getTransactionId() { return transactionId; }
+    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
 
     public List<OrderItem> getItems() { return items; }
     public void setItems(List<OrderItem> items) { this.items = items; }

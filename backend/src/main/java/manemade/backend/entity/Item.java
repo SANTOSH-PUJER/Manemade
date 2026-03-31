@@ -26,6 +26,15 @@ public class Item {
     @Column(nullable = false)
     private double price;
 
+    @Column(name = "is_veg", nullable = false)
+    private boolean isVeg = true;
+
+    @Column(name = "spice_level")
+    private int spiceLevel = 1;
+
+    @Column(name = "is_available", nullable = false)
+    private boolean isAvailable = true;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -101,6 +110,13 @@ public class Item {
         this.category = category;
     }
 
+    public boolean isVeg() { return isVeg; }
+    public void setVeg(boolean veg) { isVeg = veg; }
+    public int getSpiceLevel() { return spiceLevel; }
+    public void setSpiceLevel(int spiceLevel) { this.spiceLevel = spiceLevel; }
+    public boolean isAvailable() { return isAvailable; }
+    public void setAvailable(boolean available) { isAvailable = available; }
+
     public static class ItemBuilder {
         private Item instance = new Item();
 
@@ -131,6 +147,21 @@ public class Item {
 
         public ItemBuilder category(Category category) {
             instance.setCategory(category);
+            return this;
+        }
+
+        public ItemBuilder isVeg(boolean isVeg) {
+            instance.setVeg(isVeg);
+            return this;
+        }
+
+        public ItemBuilder spiceLevel(int spiceLevel) {
+            instance.setSpiceLevel(spiceLevel);
+            return this;
+        }
+
+        public ItemBuilder isAvailable(boolean isAvailable) {
+            instance.setAvailable(isAvailable);
             return this;
         }
 

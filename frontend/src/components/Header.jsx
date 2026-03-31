@@ -1,15 +1,31 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import '../styles/Header.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+    }
+  };
+  const userData = JSON.parse(localStorage.getItem('user'));
+  const user = userData?.user;
 
   const { cartCount } = useCart();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    window.location.href = '/';
   };
 
   return (
@@ -25,6 +41,9 @@ const Header = () => {
             type="text" 
             className="search-bar" 
             placeholder="Search for homemade rotti, chutney, meals..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleSearch}
           />
         </div>
 
@@ -32,7 +51,9 @@ const Header = () => {
           <div className="nav-links">
             <Link to="/" className="nav-link">Home</Link>
             <Link to="/shop" className="nav-link">Shop</Link>
-            <Link to="/categories" className="nav-link">Categories</Link>
+            {user && user.email === 'admin@manemade.com' && (
+              <Link to="/admin" className="nav-link admin-link">Admin</Link>
+            )}
           </div>
           
           <div className="action-btns">
@@ -40,11 +61,20 @@ const Header = () => {
                <ShoppingCart size={22} />
                {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
             </Link>
-            <Link to="/profile" className="btn-icon-text">
-               <User size={20} />
-               <span>Profile</span>
-            </Link>
-            <Link to="/register" className="btn-register-header">Register</Link>
+            {user ? (
+              <>
+                <Link to="/profile" className="btn-icon-text">
+                   <User size={20} />
+                   <span>{user.firstName}</span>
+                </Link>
+                <button onClick={handleLogout} className="btn-register-header" style={{ background: '#718096', border: 'none', cursor: 'pointer' }}>Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="nav-link" style={{ marginRight: '10px' }}>Login</Link>
+                <Link to="/register" className="btn-register-header">Register</Link>
+              </>
+            )}
           </div>
 
           <button className="mobile-menu-btn" onClick={toggleMenu}>
@@ -60,8 +90,17 @@ const Header = () => {
           <Link to="/shop" className="mobile-nav-link" onClick={toggleMenu}>Shop</Link>
           <Link to="/categories" className="mobile-nav-link" onClick={toggleMenu}>Categories</Link>
           <hr className="mobile-divider" />
-          <Link to="/login" className="mobile-nav-link" onClick={toggleMenu}>Login</Link>
-          <Link to="/register" className="mobile-nav-link" onClick={toggleMenu}>Register</Link>
+          {user ? (
+            <>
+              <Link to="/profile" className="mobile-nav-link" onClick={toggleMenu}>My Profile</Link>
+              <div className="mobile-nav-link" onClick={() => { handleLogout(); toggleMenu(); }} style={{ cursor: 'pointer' }}>Logout</div>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="mobile-nav-link" onClick={toggleMenu}>Login</Link>
+              <Link to="/register" className="mobile-nav-link" onClick={toggleMenu}>Register</Link>
+            </>
+          )}
         </div>
       </div>
     </header>

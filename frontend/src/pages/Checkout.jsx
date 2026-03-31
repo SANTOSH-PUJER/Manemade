@@ -1,147 +1,134 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ShoppingBag, ChevronRight, Trash2, Plus, Minus, CreditCard, MapPin } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { CreditCard, ShoppingBag } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import QuantitySelector from '../components/ui/QuantitySelector';
+import SectionHeading from '../components/ui/SectionHeading';
+import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../styles/Checkout.css';
+import { useToast } from '../context/ToastContext';
+import { addressService } from '../services/userService';
+import api from '../services/userService';
 
-const Checkout = () => {
-  const { cartItems, cartTotal, updateQuantity, removeFromCart, clearCart } = useCart();
-  const [loading, setLoading] = useState(false);
-  const [orderPlaced, setOrderPlaced] = useState(false);
-  const navigate = useNavigate();
+function Checkout() {
+  const { user } = useAuth();
+  const { cartItems, cartSubtotal, deliveryFee, taxes, cartTotal, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { showToast } = useToast();
+  const [addresses, setAddresses] = useState([]);
+  const [placingOrder, setPlacingOrder] = useState(false);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
 
-  const handlePlaceOrder = async () => {
-    if (cartItems.length === 0) return;
-    
-    setLoading(true);
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const loadAddresses = async () => {
+      setLoadingAddresses(true);
+      try {
+        const response = await addressService.getAddresses(user.id);
+        setAddresses(response.data || []);
+      } catch (error) {
+        showToast({ title: 'Could not load addresses', description: error.response?.data?.message || 'Please add an address before checkout.' });
+      } finally {
+        setLoadingAddresses(false);
+      }
+    };
+
+    loadAddresses();
+  }, [showToast, user?.id]);
+
+  const selectedAddress = useMemo(() => addresses.find((address) => address.default) || addresses[0], [addresses]);
+
+  const handleCheckout = async () => {
+    if (!user?.id || !selectedAddress) {
+      showToast({ title: 'Address required', description: 'Please save a delivery address before placing the order.' });
+      return;
+    }
+
+    setPlacingOrder(true);
     try {
-      // Dummy user and address for now since auth integration is partial
-      const orderData = {
-        userId: 1, // Default user from DataInitializer
-        addressId: 1, // Default address if exists
-        items: cartItems.map(item => ({
-          itemId: item.id,
-          quantity: item.quantity
-        }))
-      };
-
-      await axios.post('http://localhost:8081/api/order/place', orderData);
-      setOrderPlaced(true);
+      await api.post('/order/place', {
+        userId: user.id,
+        addressId: selectedAddress.id,
+        items: cartItems.map((item) => ({ itemId: item.id, quantity: item.quantity })),
+      });
       clearCart();
-    } catch (err) {
-      console.error('Order placement failed:', err);
-      alert('Failed to place order. Please check if the backend is running.');
+      showToast({ title: 'Order placed successfully', description: 'Your meal is now being prepared.', tone: 'success' });
+    } catch (error) {
+      showToast({ title: 'Checkout failed', description: error.response?.data?.message || 'Please verify your cart items and try again.' });
     } finally {
-      setLoading(false);
+      setPlacingOrder(false);
     }
   };
 
-  if (orderPlaced) {
+  if (cartItems.length === 0) {
     return (
-      <div className="container checkout-success">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="success-card"
-        >
-          <div className="success-icon">✅</div>
-          <h2>Order Placed Successfully!</h2>
-          <p>Your delicious homemade meal is being prepared with love.</p>
-          <button className="btn-primary" onClick={() => navigate('/')}>Back to Home</button>
-        </motion.div>
+      <div className="rounded-[40px] border border-dashed border-white/15 bg-white/60 p-12 text-center shadow-[var(--shadow-soft)] dark:bg-white/5">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--accent-strong)]"><ShoppingBag size={28} /></div>
+        <h1 className="mt-6 font-display text-4xl font-semibold">Your cart is empty</h1>
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-[var(--text-secondary)]">The cart page now has a cleaner premium layout with room for payment, address, coupon, and delivery integrations.</p>
+        <Link to="/shop" className="mt-8 inline-flex rounded-full bg-[var(--accent-gradient)] px-6 py-3 text-sm font-semibold text-white shadow-[var(--shadow-soft)]">Browse dishes</Link>
       </div>
     );
   }
 
   return (
-    <div className="container checkout-page">
-      <div className="checkout-header">
-        <h1>Your Shopping Cart</h1>
-        <div className="breadcrumb">
-          <Link to="/">Home</Link> <ChevronRight size={14} /> <span>Checkout</span>
-        </div>
-      </div>
+    <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
+      <section className="space-y-6">
+        <SectionHeading eyebrow="Cart" title="A cleaner checkout flow with emphasis on quantity control and order clarity" description="This screen is redesigned to highlight what matters most before payment: items, totals, and clear actions." />
 
-      <div className="checkout-content">
-        <div className="cart-list-section">
-          {cartItems.length === 0 ? (
-            <div className="empty-cart">
-              <ShoppingBag size={64} />
-              <p>Your cart is empty</p>
-              <Link to="/" className="btn-primary">Browse Food</Link>
+        <div className="space-y-4">
+          {cartItems.map((item) => (
+            <article key={item.id} className="grid gap-4 rounded-[32px] border border-white/10 bg-white/70 p-5 shadow-[var(--shadow-soft)] dark:bg-white/5 sm:grid-cols-[120px_1fr_auto]">
+              <img src={item.image} alt={item.name} className="h-28 w-full rounded-[24px] object-cover sm:h-32" />
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.22em] text-[var(--text-muted)]">{item.deliveryTime}</p>
+                  <h3 className="mt-2 font-display text-2xl font-semibold">{item.name}</h3>
+                </div>
+                <p className="text-sm text-[var(--text-secondary)]">Rs. {item.price} each</p>
+                <QuantitySelector compact quantity={item.quantity} onDecrease={() => updateQuantity(item.id, item.quantity - 1)} onIncrease={() => updateQuantity(item.id, item.quantity + 1)} />
+              </div>
+              <div className="flex flex-col items-start justify-between sm:items-end">
+                <p className="text-2xl font-semibold">Rs. {item.price * item.quantity}</p>
+                <button type="button" onClick={() => removeFromCart(item.id)} className="text-sm font-medium text-rose-500 transition hover:text-rose-600">Remove</button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <aside className="space-y-6 rounded-[36px] border border-white/10 bg-white/70 p-7 shadow-[var(--shadow-strong)] dark:bg-white/5">
+        <div>
+          <p className="text-sm uppercase tracking-[0.22em] text-[var(--text-muted)]">Order summary</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold">Ready for checkout</h2>
+        </div>
+
+        <div className="space-y-4 rounded-[28px] bg-[var(--surface-muted)] p-5">
+          <div className="flex items-center justify-between text-sm"><span className="text-[var(--text-secondary)]">Subtotal</span><span>Rs. {cartSubtotal}</span></div>
+          <div className="flex items-center justify-between text-sm"><span className="text-[var(--text-secondary)]">Delivery</span><span>Rs. {deliveryFee}</span></div>
+          <div className="flex items-center justify-between text-sm"><span className="text-[var(--text-secondary)]">Taxes</span><span>Rs. {taxes}</span></div>
+          <div className="border-t border-white/10 pt-4"><div className="flex items-center justify-between text-lg font-semibold"><span>Total</span><span>Rs. {cartTotal}</span></div></div>
+        </div>
+
+        <div className="rounded-[28px] border border-white/10 bg-[var(--surface-muted)] p-5">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">Delivery address</p>
+          {loadingAddresses ? (
+            <p className="mt-3 text-sm text-[var(--text-secondary)]">Loading saved addresses...</p>
+          ) : selectedAddress ? (
+            <div className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
+              <p>{selectedAddress.line1}</p>
+              {selectedAddress.line2 && <p>{selectedAddress.line2}</p>}
+              <p>{selectedAddress.city}, {selectedAddress.state} {selectedAddress.pincode}</p>
             </div>
           ) : (
-            <div className="cart-items">
-              {cartItems.map((item) => (
-                <motion.div 
-                  key={item.id} 
-                  layout 
-                  className="cart-item-card"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                >
-                  <img src={item.image} alt={item.name} className="cart-item-img" />
-                  <div className="cart-item-info">
-                    <h3>{item.name}</h3>
-                    <p className="price">₹{item.price}</p>
-                  </div>
-                  <div className="quantity-controls">
-                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)}><Minus size={16} /></button>
-                    <span>{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}><Plus size={16} /></button>
-                  </div>
-                  <div className="cart-item-total">
-                    ₹{item.price * item.quantity}
-                  </div>
-                  <button className="remove-btn" onClick={() => removeFromCart(item.id)}>
-                    <Trash2 size={18} />
-                  </button>
-                </motion.div>
-              ))}
-            </div>
+            <p className="mt-3 text-sm text-rose-500">No saved address found for this account.</p>
           )}
         </div>
 
-        <div className="order-summary-section">
-          <div className="summary-card">
-            <h3>Order Summary</h3>
-            <div className="summary-row">
-              <span>Subtotal</span>
-              <span>₹{cartTotal}</span>
-            </div>
-            <div className="summary-row">
-              <span>Delivery Fee</span>
-              <span>₹40</span>
-            </div>
-            <hr />
-            <div className="summary-row total">
-              <span>Total Payable</span>
-              <span>₹{cartTotal + (cartItems.length > 0 ? 40 : 0)}</span>
-            </div>
-            
-            <div className="delivery-info">
-              <h4><MapPin size={18} /> Delivery Address</h4>
-              <p>Default Home Address (1st Block, Rajajinagar, Bangalore)</p>
-            </div>
-
-            <button 
-              className="place-order-btn" 
-              disabled={cartItems.length === 0 || loading}
-              onClick={handlePlaceOrder}
-            >
-              {loading ? 'Processing...' : (
-                <>
-                  <CreditCard size={20} /> Place Order
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
+        <button type="button" onClick={handleCheckout} disabled={placingOrder || loadingAddresses || !selectedAddress} className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--accent-gradient)] px-6 py-4 text-sm font-semibold text-white shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"><CreditCard size={18} />{placingOrder ? 'Placing order...' : 'Proceed to Checkout'}</button>
+        <button type="button" onClick={clearCart} className="w-full rounded-full border border-white/15 px-6 py-4 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]">Clear cart</button>
+      </aside>
     </div>
   );
-};
+}
 
 export default Checkout;

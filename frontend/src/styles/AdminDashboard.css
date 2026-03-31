@@ -1,0 +1,203 @@
+.admin-dashboard {
+  display: flex;
+  padding-top: 80px;
+  min-height: 100vh;
+  background: #f7fafc;
+}
+
+.admin-sidebar-nav {
+  width: 260px;
+  background: white;
+  padding: 30px 20px;
+  height: calc(100vh - 80px);
+  position: sticky;
+  top: 80px;
+  border-right: 1px solid #e2e8f0;
+}
+
+.admin-sidebar-nav h2 {
+  font-size: 1.5rem;
+  color: #FF7043;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.admin-sidebar-nav nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-sidebar-nav button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  color: #4A5568;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  font-weight: 500;
+}
+
+.admin-sidebar-nav button:hover {
+  background: #fdf2f0;
+  color: #FF7043;
+}
+
+.admin-sidebar-nav button.active {
+  background: #FF7043;
+  color: white;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 40px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.admin-header h1 {
+  font-size: 1.8rem;
+  color: #2D3748;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.stat-icon.orders { background: #4299E1; }
+.stat-icon.users { background: #48BB78; }
+.stat-icon.revenue { background: #ED8936; }
+.stat-icon.items { background: #9F7AEA; }
+
+.stat-info h4 {
+  font-size: 0.9rem;
+  color: #718096;
+  margin-bottom: 5px;
+}
+
+.stat-info p {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2D3748;
+}
+
+.admin-table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  background: #F8FAFC;
+  padding: 15px 20px;
+  text-align: left;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #718096;
+  letter-spacing: 0.05em;
+}
+
+.admin-table td {
+  padding: 15px 20px;
+  border-bottom: 1px solid #EDF2F7;
+  color: #4A5568;
+}
+
+.table-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.btn-icon {
+  background: #F7FAFC;
+  border: 1px solid #E2E8F0;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #718096;
+  margin-right: 5px;
+}
+
+.btn-icon:hover {
+  background: #EDF2F7;
+  color: #2D3748;
+}
+
+.btn-icon.delete:hover {
+  background: #FFF5F5;
+  color: #F56565;
+  border-color: #FEB2B2;
+}
+
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-pill.placed { background: #EBF8FF; color: #3182CE; }
+.status-pill.delivered { background: #F0FFF4; color: #38A169; }
+.status-pill.cancelled { background: #FFF5F5; color: #E53E3E; }
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-primary-admin {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FF7043;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}

@@ -9,6 +9,8 @@ public class OrderResponse {
     private Long addressId;
     private double totalAmount;
     private String status;
+    private String paymentMode;
+    private String transactionId;
     private List<OrderItemResponse> items;
     private LocalDateTime createdTs;
 
@@ -29,6 +31,10 @@ public class OrderResponse {
     public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getPaymentMode() { return paymentMode; }
+    public void setPaymentMode(String paymentMode) { this.paymentMode = paymentMode; }
+    public String getTransactionId() { return transactionId; }
+    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
     public List<OrderItemResponse> getItems() { return items; }
     public void setItems(List<OrderItemResponse> items) { this.items = items; }
     public LocalDateTime getCreatedTs() { return createdTs; }
@@ -73,6 +79,8 @@ public class OrderResponse {
         public OrderResponseBuilder addressId(Long addressId) { instance.setAddressId(addressId); return this; }
         public OrderResponseBuilder totalAmount(double totalAmount) { instance.setTotalAmount(totalAmount); return this; }
         public OrderResponseBuilder status(String status) { instance.setStatus(status); return this; }
+        public OrderResponseBuilder paymentMode(String paymentMode) { instance.setPaymentMode(paymentMode); return this; }
+        public OrderResponseBuilder transactionId(String transactionId) { instance.setTransactionId(transactionId); return this; }
         public OrderResponseBuilder items(List<OrderItemResponse> items) { instance.setItems(items); return this; }
         public OrderResponseBuilder createdTs(LocalDateTime createdTs) { instance.setCreatedTs(createdTs); return this; }
         public OrderResponse build() { return instance; }

@@ -23,6 +23,16 @@ public class ItemController {
         return ResponseEntity.ok(itemService.getItemsByCategoryId(categoryId));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<ItemResponse>> search(@RequestParam String q) {
+        return ResponseEntity.ok(itemService.searchItems(q));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ItemResponse>> getAll() {
+        return ResponseEntity.ok(itemService.getAllItems());
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ItemResponse> create(@RequestBody Item item) {
         return ResponseEntity.ok(itemService.createItem(item));
