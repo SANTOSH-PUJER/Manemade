@@ -1,46 +1,96 @@
-import { SlidersHorizontal } from 'lucide-react';
-import FilterChips from '../ui/FilterChips';
+import { Filter, Star } from 'lucide-react';
 
-function FiltersSidebar({ categories, activeCategory, onCategoryChange, activeType, onTypeChange, priceLimit, onPriceLimitChange, minRating, onMinRatingChange }) {
+export default function FiltersSidebar({
+  categories,
+  activeCategory,
+  onCategoryChange,
+  priceLimit,
+  onPriceLimitChange,
+  minRating,
+  onMinRatingChange,
+}) {
+  const ratings = [4.5, 4.0, 3.5, 3.0];
+
+  const resetFilters = () => {
+    onCategoryChange('All');
+    onPriceLimitChange(500);
+    onMinRatingChange(0);
+  };
+
   return (
-    <aside className="space-y-6 rounded-[32px] border border-white/10 bg-white/70 p-6 shadow-[var(--shadow-soft)] dark:bg-white/5">
-      <div className="flex items-center gap-3">
-        <div className="rounded-2xl bg-[var(--accent-soft)] p-3 text-[var(--accent-strong)]">
-          <SlidersHorizontal size={18} />
-        </div>
-        <div>
-          <p className="font-semibold">Refine your menu</p>
-          <p className="text-sm text-[var(--text-muted)]">Filter by taste, budget, and rating</p>
-        </div>
+    <aside className="sticky top-28 h-fit space-y-10 rounded-[var(--radius-lg)] border border-black/5 bg-[var(--surface)] p-8 shadow-[var(--shadow-soft)] dark:border-white/5">
+      <div className="flex items-center justify-between">
+        <h3 className="flex items-center gap-2 font-display text-xl font-black tracking-tight uppercase">
+          <Filter size={18} className="text-[var(--accent-strong)]" strokeWidth={3} />
+          Filters
+        </h3>
+        <button
+          onClick={resetFilters}
+          className="text-xs font-bold text-[var(--accent-strong)] hover:underline"
+        >
+          Clear All
+        </button>
       </div>
 
+      {/* Category Filter */}
       <div className="space-y-4">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Category</p>
-        <FilterChips options={['All', ...categories]} active={activeCategory} onChange={onCategoryChange} />
+        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Category</p>
+        <div className="flex flex-wrap gap-2">
+          {['All', ...categories].map((cat) => (
+            <button
+              key={cat}
+              onClick={() => onCategoryChange(cat)}
+              className={`
+                rounded-full px-4 py-2 text-xs font-bold transition-all duration-300
+                ${activeCategory === cat
+                  ? 'bg-[var(--accent-strong)] text-white shadow-md'
+                  : 'bg-[var(--surface-muted)] text-[var(--text-secondary)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent-strong)]'}
+              `}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
       </div>
 
+      {/* Price Range */}
       <div className="space-y-4">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Type</p>
-        <FilterChips options={['All', 'veg', 'non-veg']} active={activeType} onChange={onTypeChange} />
+        <div className="flex justify-between items-center">
+          <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Max Price</p>
+          <span className="text-sm font-black text-[var(--accent-strong)]">₹{priceLimit}</span>
+        </div>
+        <input
+          type="range"
+          min="50"
+          max="500"
+          step="10"
+          value={priceLimit}
+          onChange={(e) => onPriceLimitChange(Number(e.target.value))}
+          className="w-full accent-[var(--accent-strong)] cursor-pointer"
+        />
       </div>
 
-      <div className="space-y-3">
-        <div className="flex items-center justify-between text-sm font-medium">
-          <span>Max price</span>
-          <span>Rs. {priceLimit}</span>
+      {/* Minimum Rating */}
+      <div className="space-y-4">
+        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Minimum Rating</p>
+        <div className="grid grid-cols-2 gap-2">
+          {ratings.map((rate) => (
+            <button
+              key={rate}
+              onClick={() => onMinRatingChange(rate)}
+              className={`
+                flex items-center justify-center gap-1.5 rounded-xl py-3 text-xs font-bold transition-all duration-300
+                ${minRating === rate
+                  ? 'bg-amber-400 text-black shadow-lg shadow-amber-400/20'
+                  : 'bg-[var(--surface-muted)] text-[var(--text-secondary)] hover:bg-[var(--surface-glass)]'}
+              `}
+            >
+              <Star size={12} fill={minRating === rate ? 'currentColor' : 'none'} />
+              {rate}+
+            </button>
+          ))}
         </div>
-        <input type="range" min="80" max="260" step="10" value={priceLimit} onChange={(event) => onPriceLimitChange(Number(event.target.value))} className="w-full accent-[var(--accent-strong)]" />
-      </div>
-
-      <div className="space-y-3">
-        <div className="flex items-center justify-between text-sm font-medium">
-          <span>Minimum rating</span>
-          <span>{minRating.toFixed(1)}+</span>
-        </div>
-        <input type="range" min="4" max="5" step="0.1" value={minRating} onChange={(event) => onMinRatingChange(Number(event.target.value))} className="w-full accent-[var(--accent-strong)]" />
       </div>
     </aside>
   );
 }
-
-export default FiltersSidebar;

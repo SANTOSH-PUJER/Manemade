@@ -2,14 +2,16 @@ package manemade.backend.dto;
 
 public class CategoryResponse {
     private Long id;
+    private String slug;
     private String name;
     private String description;
     private String image;
 
     public CategoryResponse() {}
 
-    public CategoryResponse(Long id, String name, String description, String image) {
+    public CategoryResponse(Long id, String slug, String name, String description, String image) {
         this.id = id;
+        this.slug = slug;
         this.name = name;
         this.description = description;
         this.image = image;
@@ -17,6 +19,9 @@ public class CategoryResponse {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getSlug() { return slug; }
+    public void setSlug(String slug) { this.slug = slug; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -33,12 +38,18 @@ public class CategoryResponse {
 
     public static class CategoryResponseBuilder {
         private Long id;
+        private String slug;
         private String name;
         private String description;
         private String image;
 
         public CategoryResponseBuilder id(Long id) {
             this.id = id;
+            return this;
+        }
+
+        public CategoryResponseBuilder slug(String slug) {
+            this.slug = slug;
             return this;
         }
 
@@ -58,7 +69,7 @@ public class CategoryResponse {
         }
 
         public CategoryResponse build() {
-            return new CategoryResponse(id, name, description, image);
+            return new CategoryResponse(id, slug, name, description, image);
         }
     }
 }

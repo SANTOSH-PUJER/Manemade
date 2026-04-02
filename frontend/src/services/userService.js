@@ -28,12 +28,12 @@ export const authService = {
   resetPassword: (resetData) => api.post('/user/reset-password', resetData),
   getUserProfile: (id) => api.get(`/user/${id}`),
   updateUserProfile: (id, userData) => api.put(`/user/${id}`, userData),
-  changePassword: (id, passwordData) => api.put(`/user/${id}/change-password`, passwordData),
 };
 
 export const addressService = {
   getAddresses: (userId) => api.get(`/address/user/${userId}`),
   addAddress: (userId, addressData) => api.post(`/address/user/${userId}`, addressData),
+  updateAddress: (userId, addressId, addressData) => api.put(`/address/${addressId}/user/${userId}`, addressData),
   deleteAddress: (addressId) => api.delete(`/address/${addressId}`),
   setDefaultAddress: (userId, addressId) => api.put(`/address/${addressId}/set-default/user/${userId}`),
 };

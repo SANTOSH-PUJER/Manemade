@@ -18,6 +18,12 @@ public class Category {
     @Column(nullable = false, unique = true)
     private String slug;
 
+    @Column(length = 500)
+    private String description;
+
+    @Column(name = "image_url", length = 1000)
+    private String imageUrl;
+
     @CreationTimestamp
     @Column(name = "created_ts", updatable = false)
     private LocalDateTime createdTs;
@@ -51,5 +57,21 @@ public class Category {
 
     public void setSlug(String slug) {
         this.slug = slug;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

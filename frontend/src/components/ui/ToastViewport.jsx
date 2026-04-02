@@ -1,32 +1,83 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { CheckCircle2, Info, X } from 'lucide-react';
+import { CheckCircle2, Info, X, AlertTriangle, AlertCircle } from 'lucide-react';
+
+const TONE_CONFIG = {
+  success: {
+    icon: CheckCircle2,
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-500/10',
+    border: 'border-emerald-500/20'
+  },
+  error: {
+    icon: AlertCircle,
+    color: 'text-rose-500',
+    bg: 'bg-rose-500/10',
+    border: 'border-rose-500/20'
+  },
+  warning: {
+    icon: AlertTriangle,
+    color: 'text-amber-500',
+    bg: 'bg-amber-500/10',
+    border: 'border-amber-500/20'
+  },
+  default: {
+    icon: Info,
+    color: 'text-[var(--accent-strong)]',
+    bg: 'bg-[var(--accent-soft)]',
+    border: 'border-[var(--accent-strong)]/10'
+  }
+};
 
 function ToastViewport({ toasts, onClose }) {
   return (
-    <div className="pointer-events-none fixed right-4 top-24 z-[60] flex w-[min(92vw,360px)] flex-col gap-3">
-      <AnimatePresence>
-        {toasts.map((toast) => (
-          <motion.div
-            key={toast.id}
-            initial={{ opacity: 0, x: 24, scale: 0.98 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 16, scale: 0.98 }}
-            className="pointer-events-auto rounded-3xl border border-white/15 bg-[var(--surface)]/95 p-4 shadow-[var(--shadow-strong)] backdrop-blur-2xl"
-          >
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 rounded-2xl bg-[var(--accent-soft)] p-2 text-[var(--accent-strong)]">
-                {toast.tone === 'success' ? <CheckCircle2 size={16} /> : <Info size={16} />}
+    <div className="pointer-events-none fixed right-4 bottom-24 sm:bottom-12 sm:right-12 z-[100] flex w-[min(92vw,400px)] flex-col gap-4">
+      <AnimatePresence mode="popLayout">
+        {toasts.map((toast) => {
+          const config = TONE_CONFIG[toast.tone] || TONE_CONFIG.default;
+          const Icon = config.icon;
+
+          return (
+            <motion.div
+              key={toast.id}
+              layout
+              initial={{ opacity: 0, scale: 0.8, y: 50 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+              className={`pointer-events-auto group relative overflow-hidden rounded-[24px] border ${config.border} bg-[var(--surface)]/90 p-5 shadow-[var(--shadow-strong)] backdrop-blur-2xl`}
+            >
+              <div className="flex items-start gap-4">
+                <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${config.bg} ${config.color} shadow-inner`}>
+                  <Icon size={20} />
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-black tracking-tight">{toast.title}</p>
+                  {toast.description && (
+                    <p className="text-xs font-medium text-[var(--text-secondary)] leading-relaxed">
+                      {toast.description}
+                    </p>
+                  )}
+                </div>
+                <button 
+                  type="button" 
+                  onClick={() => onClose(toast.id)} 
+                  className="rounded-full p-1 text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                >
+                  <X size={16} />
+                </button>
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold">{toast.title}</p>
-                {toast.description && <p className="mt-1 text-sm text-[var(--text-secondary)]">{toast.description}</p>}
+              
+              {/* Progress Bar placeholder - would need logic to animate based on timeout */}
+              <div className="absolute bottom-0 left-0 h-1 w-full bg-black/5 dark:bg-white/5">
+                 <motion.div 
+                   initial={{ width: '100%' }}
+                   animate={{ width: '0%' }}
+                   transition={{ duration: 3.2, ease: 'linear' }}
+                   className={`h-full ${config.color.replace('text-', 'bg-')}`} 
+                 />
               </div>
-              <button type="button" onClick={() => onClose(toast.id)} className="text-[var(--text-muted)]">
-                <X size={16} />
-              </button>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          );
+        })}
       </AnimatePresence>
     </div>
   );

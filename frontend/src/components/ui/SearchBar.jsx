@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 
-function SearchBar({ value, onChange, onSubmit, suggestions = [], placeholder = 'Search for jolada rotti, chutney, sweets...' }) {
+function SearchBar({ value, onChange, onSubmit, suggestions = [], placeholder = 'Search for jolada rotti, ennegayi, chutney, snacks...' }) {
   const visibleSuggestions = suggestions.slice(0, 5);
 
   return (

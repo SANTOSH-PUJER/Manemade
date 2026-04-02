@@ -1,65 +1,91 @@
 import { motion } from 'framer-motion';
-import { Plus, Star } from 'lucide-react';
+import { ShoppingBag, Star, Timer } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useToast } from '../../context/ToastContext';
+import Button from './Button';
+import Card from './Card';
 
-function DishCard({ dish }) {
+export default function DishCard({ dish }) {
   const { addToCart } = useCart();
   const { showToast } = useToast();
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     addToCart(dish);
     showToast({
-      title: `${dish.name} added to cart`,
-      description: 'Your order basket has been updated.',
-      tone: 'success',
+      title: 'Added to cart',
+      description: `${dish.name} is now in your basket.`,
     });
   };
 
   return (
-    <motion.article
-      layout
-      whileHover={{ y: -8, scale: 1.01 }}
-      className="group overflow-hidden rounded-[30px] border border-white/10 bg-white/70 shadow-[var(--shadow-soft)] backdrop-blur-xl transition dark:bg-white/5"
-    >
-      <Link to={`/dish/${dish.slug}`} className="block overflow-hidden">
-        <div className="relative">
-          <img src={dish.image} alt={dish.name} className="h-56 w-full object-cover transition duration-500 group-hover:scale-105" />
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent" />
-          <div className="absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-xs font-semibold text-slate-900 backdrop-blur">
-            {dish.category}
+    <Card className="flex flex-col h-full group" isHoverable={true}>
+      <Link to={`/dish/${dish.slug}`} className="block relative aspect-[4/3] overflow-hidden">
+        <img
+          src={dish.image}
+          alt={dish.name}
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        
+        {/* Overlay Badges */}
+        <div className="absolute left-4 top-4 flex flex-col gap-2">
+          <div className={`p-1 rounded-md border-2 bg-white/90 backdrop-blur-md shadow-sm ${dish.type === 'non-veg' ? 'border-rose-500' : 'border-emerald-500'}`}>
+            <div className={`h-2.5 w-2.5 rounded-full ${dish.type === 'non-veg' ? 'bg-rose-500' : 'bg-emerald-500'}`} />
           </div>
+          {dish.isBestSeller && (
+            <span className="bg-amber-400 text-black text-[10px] font-black px-2 py-1 rounded-md shadow-lg uppercase tracking-tighter">
+              Bestseller
+            </span>
+          )}
         </div>
-      </Link>
 
-      <div className="space-y-4 p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.24em] text-[var(--text-muted)]">{dish.deliveryTime}</p>
-            <Link to={`/dish/${dish.slug}`} className="mt-2 block font-display text-xl font-semibold">{dish.name}</Link>
-          </div>
-          <div className="inline-flex items-center gap-1 rounded-full bg-[var(--surface-muted)] px-3 py-1 text-sm font-semibold">
-            <Star size={14} className="fill-current text-amber-400" />
+        <div className="absolute right-4 top-4">
+          <div className="flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-black shadow-lg backdrop-blur-md border border-black/5">
+            <Star size={12} fill="#ffb800" stroke="#ffb800" />
             {dish.rating}
           </div>
         </div>
 
-        <p className="line-clamp-2 text-sm leading-6 text-[var(--text-secondary)]">{dish.description}</p>
-
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-[var(--text-muted)]">Price</p>
-            <p className="text-2xl font-semibold">Rs. {dish.price}</p>
-          </div>
-          <button type="button" onClick={handleAddToCart} className="inline-flex items-center gap-2 rounded-full bg-[var(--accent-gradient)] px-4 py-3 text-sm font-semibold text-white shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5">
-            <Plus size={16} />
-            Add to Cart
-          </button>
+        {/* Hover Action Overlay */}
+        <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+           <Button 
+             className="w-full shadow-2xl" 
+             onClick={handleAddToCart}
+             icon={ShoppingBag}
+           >
+             Quick Add
+           </Button>
         </div>
-      </div>
-    </motion.article>
+      </Link>
+
+      <Card.Content className="flex flex-1 flex-col p-5 space-y-4">
+        <div className="space-y-1">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="line-clamp-1 flex-1 font-display text-lg font-black tracking-tight group-hover:text-[var(--accent-strong)] transition-colors">
+              {dish.name}
+            </h3>
+            <span className="text-lg font-black text-[var(--accent-strong)] shrink-0">
+              ₹{dish.price}
+            </span>
+          </div>
+          <p className="line-clamp-2 text-xs font-medium leading-relaxed text-[var(--text-muted)]">
+            {dish.description}
+          </p>
+        </div>
+
+        <div className="mt-auto pt-4 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
+          <div className="flex items-center gap-1.5">
+            <Timer size={14} className="text-[var(--accent-strong)]" />
+            {dish.deliveryTime}
+          </div>
+          <div className="h-1 w-1 rounded-full bg-[var(--text-muted)] opacity-30" />
+          <div className="truncate flex-1">
+            {dish.category}
+          </div>
+        </div>
+      </Card.Content>
+    </Card>
   );
 }
-
-export default DishCard;

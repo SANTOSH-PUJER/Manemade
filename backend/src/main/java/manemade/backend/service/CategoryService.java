@@ -4,6 +4,8 @@ import manemade.backend.dto.CategoryResponse;
 import manemade.backend.repository.CategoryRepository;
 import manemade.backend.entity.Category;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +17,9 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<CategoryResponse> getAllCategories() {
-        return categoryRepository.findAll().stream()
+        return categoryRepository.findCategoriesWithAvailableItems().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -29,9 +32,10 @@ public class CategoryService {
     private CategoryResponse mapToResponse(Category category) {
         return CategoryResponse.builder()
                 .id(category.getId())
+                .slug(category.getSlug())
                 .name(category.getName())
-                .description(category.getSlug()) // Using slug as description for now if no desc field exists
-                .image(null) // Placeholder for image
+                .description(category.getDescription())
+                .image(category.getImageUrl())
                 .build();
     }
 }

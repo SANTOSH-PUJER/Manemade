@@ -25,6 +25,8 @@ export const dishes = [
   { id: 11, slug: 'kharada-pundi-spice-bites', name: 'Kharada Pundi Spice Bites', category: 'Street Food', price: 129, rating: 4.5, reviews: 57, type: 'veg', deliveryTime: '19 mins', image: kharadaPundi, description: 'Steamed rice bites with chilli-forward seasoning and soft texture, served with chutney for a proper teatime snack.', ingredients: ['Rice flour', 'Chilli', 'Coconut', 'Mustard'], tags: ['Spicy', 'Evening Snack'], highlight: 'Gentle chew with a big spicy payoff.' },
 ];
 
+const dishLookup = new Map(dishes.map((dish) => [dish.slug, dish]));
+
 export const categories = [
   { name: 'Jolada Rotti', subtitle: 'Millet-first artisan rotis', image: joladaRotti },
   { name: 'Chutney', subtitle: 'House-ground accompaniments', image: shengaChutney },
@@ -39,7 +41,7 @@ export const offers = [
 
 export const testimonials = [
   { name: 'Ananya Kulkarni', role: 'Weekly subscriber', quote: 'This feels like restaurant-level presentation with the warmth of food from home.' },
-  { name: 'Rahul Deshpande', role: 'Hubballi transplant', quote: 'The jolada rotti meal is the closest thing I have found to my grandmother’s table.' },
+  { name: 'Rahul Deshpande', role: 'Hubballi transplant', quote: 'The jolada rotti meal is the closest thing I have found to my grandmother\'s table.' },
   { name: 'Priya S', role: 'Busy product manager', quote: 'Fast delivery, clean packaging, and the UI finally matches the quality of the food.' },
 ];
 
@@ -56,6 +58,23 @@ export const navLinks = [
   { label: 'Profile', to: '/profile' },
 ];
 
-export function findDishBySlug(slug) {
-  return dishes.find((dish) => dish.slug === slug);
+export function hydrateDish(rawDish, index = 0) {
+  const fallback = dishLookup.get(rawDish.slug) || dishes[index % dishes.length];
+  return {
+    ...fallback,
+    ...rawDish,
+    category: rawDish.categoryName || fallback.category,
+    image: rawDish.image || fallback.image,
+    rating: fallback.rating,
+    reviews: fallback.reviews,
+    type: rawDish.isVeg === false ? 'non-veg' : fallback.type,
+    deliveryTime: fallback.deliveryTime,
+    ingredients: fallback.ingredients,
+    tags: fallback.tags,
+    highlight: fallback.highlight,
+  };
+}
+
+export function findDishBySlug(slug, collection = dishes) {
+  return collection.find((dish) => dish.slug === slug);
 }

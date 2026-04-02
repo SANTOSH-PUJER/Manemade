@@ -33,6 +33,12 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses;
+
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
@@ -107,6 +113,22 @@ public class User implements UserDetails {
         isDeleted = deleted;
     }
 
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
     public static class UserBuilder {
         private User instance = new User();
 
@@ -132,6 +154,11 @@ public class User implements UserDetails {
 
         public UserBuilder password(String password) {
             instance.setPassword(password);
+            return this;
+        }
+
+        public UserBuilder avatarUrl(String avatarUrl) {
+            instance.setAvatarUrl(avatarUrl);
             return this;
         }
 

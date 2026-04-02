@@ -7,8 +7,11 @@ import Auth from './pages/Auth';
 import Checkout from './pages/Checkout';
 import FoodDetails from './pages/FoodDetails';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import LandingPage from './pages/LandingPage';
 import NotFound from './pages/NotFound';
+import Orders from './pages/Orders';
+import OrderSuccess from './pages/OrderSuccess';
 import Profile from './pages/Profile';
 import Shop from './pages/Shop';
 
@@ -33,11 +36,14 @@ function AnimatedRoutes() {
         <Route path="/shop" element={wrap(<Shop />)} />
         <Route path="/categories" element={wrap(<Shop />)} />
         <Route path="/dish/:slug" element={wrap(<FoodDetails />)} />
-        <Route path="/cart" element={wrap(<ProtectedRoute><Checkout /></ProtectedRoute>)} />
+        <Route path="/checkout" element={wrap(<ProtectedRoute><Checkout /></ProtectedRoute>)} />
+        <Route path="/orders" element={wrap(<ProtectedRoute><Orders /></ProtectedRoute>)} />
+        <Route path="/order-success" element={wrap(<ProtectedRoute><OrderSuccess /></ProtectedRoute>)} />
         <Route path="/login" element={wrap(<Auth mode="login" />)} />
         <Route path="/register" element={wrap(<Auth mode="register" />)} />
         <Route path="/profile" element={wrap(<ProtectedRoute><Profile /></ProtectedRoute>)} />
         <Route path="/forgot-password" element={wrap(<ForgotPassword />)} />
+        <Route path="/reset-password" element={wrap(<ResetPassword />)} />
         <Route path="/admin" element={wrap(<ProtectedRoute><AdminDashboard /></ProtectedRoute>)} />
         <Route path="*" element={wrap(<NotFound />)} />
       </Routes>

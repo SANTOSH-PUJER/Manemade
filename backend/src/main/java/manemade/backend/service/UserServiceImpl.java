@@ -1,9 +1,18 @@
 package manemade.backend.service;
 
-import manemade.backend.dto.*;
+import manemade.backend.dto.AddressRequest;
+import manemade.backend.dto.AuthResponse;
+import manemade.backend.dto.ChangePasswordRequest;
+import manemade.backend.dto.LoginRequest;
+import manemade.backend.dto.ResetPasswordRequest;
+import manemade.backend.dto.UpdateUserRequest;
+import manemade.backend.dto.UserRegistrationRequest;
+import manemade.backend.dto.UserResponse;
+import manemade.backend.entity.Address;
 import manemade.backend.entity.Otp;
 import manemade.backend.entity.User;
 import manemade.backend.entity.UserAnalytics;
+import manemade.backend.repository.AddressRepository;
 import manemade.backend.repository.OtpRepository;
 import manemade.backend.repository.UserAnalyticsRepository;
 import manemade.backend.repository.UserRepository;
@@ -12,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 
 @Service
@@ -24,17 +34,20 @@ public class UserServiceImpl implements UserService {
     private final OtpRepository otpRepository;
     private final UserAnalyticsRepository userAnalyticsRepository;
     private final JwtService jwtService;
+    private final AddressRepository addressRepository;
 
-    public UserServiceImpl(UserRepository userRepository, 
-                           PasswordEncoder passwordEncoder, 
-                           OtpRepository otpRepository, 
+    public UserServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           OtpRepository otpRepository,
                            UserAnalyticsRepository userAnalyticsRepository,
-                           JwtService jwtService) {
+                           JwtService jwtService,
+                           AddressRepository addressRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.otpRepository = otpRepository;
         this.userAnalyticsRepository = userAnalyticsRepository;
         this.jwtService = jwtService;
+        this.addressRepository = addressRepository;
     }
 
     @Override
@@ -58,12 +71,12 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userRepository.save(user);
         log.info("User registered successfully: {}", savedUser.getId());
-        
+
         String token = jwtService.generateToken(savedUser);
-        return AuthResponse.builder()
-                .token(token)
-                .user(mapToResponse(savedUser))
-                .build();
+        AuthResponse response = new AuthResponse();
+        response.setToken(token);
+        response.setUser(mapToResponse(savedUser));
+        return response;
     }
 
     @Override
@@ -78,19 +91,18 @@ public class UserServiceImpl implements UserService {
         }
 
         recordAnalytics(user.getId(), "WEB", "DESKTOP", "UNKNOWN");
-        
+
         String token = jwtService.generateToken(user);
-        return AuthResponse.builder()
-                .token(token)
-                .user(mapToResponse(user))
-                .build();
+        AuthResponse response = new AuthResponse();
+        response.setToken(token);
+        response.setUser(mapToResponse(user));
+        return response;
     }
 
     @Override
     public UserResponse getUserById(Long id) {
         log.info("Fetching user with id: {}", id);
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         return mapToResponse(user);
     }
 
@@ -98,8 +110,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
         log.info("Updating user with id: {}", id);
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already registered");
@@ -112,6 +123,9 @@ public class UserServiceImpl implements UserService {
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setMobileNumber(request.getMobileNumber());
+        if (request.getAvatarUrl() != null) {
+            user.setAvatarUrl(request.getAvatarUrl());
+        }
 
         User updatedUser = userRepository.save(user);
         return mapToResponse(updatedUser);
@@ -121,8 +135,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void changePassword(Long id, ChangePasswordRequest request) {
         log.info("Changing password for user with id: {}", id);
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid old password");
@@ -142,7 +155,7 @@ public class UserServiceImpl implements UserService {
 
         String otpValue = String.valueOf((int) (Math.random() * 900000) + 100000);
         Otp otp = new Otp(email, otpValue, LocalDateTime.now().plusMinutes(5));
-        
+
         otpRepository.deleteByEmail(email);
         otpRepository.save(otp);
         log.info("OTP for {}: {}", email, otpValue);
@@ -164,9 +177,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Invalid or expired OTP");
         }
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
         otpRepository.deleteByEmail(request.getEmail());
@@ -177,9 +188,7 @@ public class UserServiceImpl implements UserService {
     public void recordAnalytics(Long userId, String platform, String device, String location) {
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
-            UserAnalytics analytics = userAnalyticsRepository.findByUserId(userId)
-                    .orElse(new UserAnalytics());
-            
+            UserAnalytics analytics = userAnalyticsRepository.findByUserId(userId).orElse(new UserAnalytics());
             analytics.setUser(user);
             analytics.setPlatform(platform);
             analytics.setDevice(device);
@@ -195,6 +204,7 @@ public class UserServiceImpl implements UserService {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .mobileNumber(user.getMobileNumber())
+                .avatarUrl(user.getAvatarUrl())
                 .build();
     }
 }

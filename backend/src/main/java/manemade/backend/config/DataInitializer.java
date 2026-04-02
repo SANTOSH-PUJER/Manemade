@@ -59,12 +59,10 @@ public class DataInitializer {
 
     private Map<String, Category> ensureCategories(CategoryRepository categoryRepository) {
         List<Category> requiredCategories = List.of(
-                category("Jolada Rotti", "jolada-rotti"),
-                category("Chutney", "chutney"),
-                category("North Karnataka Meals", "north-karnataka-meals"),
-                category("Street Food", "street-food"),
-                category("Sweets", "sweets"),
-                category("Holige", "holige")
+                category("Jolada Rotti", "jolada-rotti", "Hand-pressed jowar rotis served the homemade way with regional comfort.", "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80"),
+                category("Ennegayi", "ennegayi", "Stuffed brinjal classics slow-cooked with groundnut and sesame masala.", "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=1200&q=80"),
+                category("Chutney", "chutney", "Freshly ground podis and chutneys that make every bite feel homemade.", "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=1200&q=80"),
+                category("Snacks", "snacks", "Simple, spicy evening favorites inspired by Karnataka home kitchens.", "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80")
         );
 
         List<Category> existing = categoryRepository.findAll();
@@ -72,47 +70,69 @@ public class DataInitializer {
         List<Category> toSave = new ArrayList<>();
 
         for (Category requiredCategory : requiredCategories) {
-            if (!existingBySlug.containsKey(requiredCategory.getSlug())) {
-                toSave.add(requiredCategory);
-            }
+            Category category = existingBySlug.getOrDefault(requiredCategory.getSlug(), requiredCategory);
+            category.setName(requiredCategory.getName());
+            category.setSlug(requiredCategory.getSlug());
+            category.setDescription(requiredCategory.getDescription());
+            category.setImageUrl(requiredCategory.getImageUrl());
+            toSave.add(category);
         }
 
-        if (!toSave.isEmpty()) {
-            categoryRepository.saveAll(toSave);
-            existing = categoryRepository.findAll();
-        }
+        categoryRepository.saveAll(toSave);
+        existing = categoryRepository.findAll();
 
         return existing.stream().collect(Collectors.toMap(Category::getSlug, c -> c, (left, right) -> left));
     }
 
     private void ensureItems(ItemRepository itemRepository, Map<String, Category> categories) {
-        if (itemRepository.count() > 0) {
-            return;
+        Map<String, Item> existingBySlug = itemRepository.findAll().stream()
+                .collect(Collectors.toMap(Item::getSlug, item -> item, (left, right) -> left));
+
+        existingBySlug.values().forEach(item -> item.setAvailable(false));
+
+        List<Item> seededItems = List.of(
+                item("Jolada Rotti", "jolada-rotti", "Freshly patted jowar rotti served with homemade accompaniments and a soft smoky finish.", 149.0, "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80", categories.get("jolada-rotti"), true, 2, 4.9, 412, 22, "Jowar flour,Ghee,Onion kosambari,Homestyle accompaniment", "Best Seller,Homemade Favorite", "Soft, earthy, and handmade for a true home-kitchen feel."),
+                item("Stuffed Ennegayi", "stuffed-ennegayi", "Baby brinjals simmered in a rich groundnut and sesame masala just like a home Sunday lunch.", 169.0, "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=1200&q=80", categories.get("ennegayi"), true, 3, 4.8, 286, 24, "Baby brinjal,Groundnut,Sesame,Dry coconut", "House Special,Traditional", "Nutty, silky, and deeply comforting."),
+                item("Shenga Chutney", "shenga-chutney", "Roasted groundnut chutney with byadgi chilli, garlic, and a smoky homemade finish.", 79.0, "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=1200&q=80", categories.get("chutney"), true, 2, 4.9, 158, 14, "Groundnut,Byadgi chilli,Garlic,Curry leaves", "Pantry Hero,Fresh Batch", "A bold chutney that instantly lifts rotis and snacks."),
+                item("Girmit", "girmit", "Crisp puffed rice tossed with masala, onion, and coriander for a proper evening tiffin.", 109.0, "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80", categories.get("snacks"), true, 2, 4.7, 193, 18, "Puffed rice,Onion,Chilli powder,Coriander", "Evening Snack,Crunchy", "Light, spicy, and ready for chai time."),
+                item("Mandakki Oggarane", "mandakki-oggarane", "Tempered puffed rice with peanuts and turmeric for a quick homemade bite.", 99.0, "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&q=80", categories.get("snacks"), true, 2, 4.5, 88, 16, "Puffed rice,Peanuts,Turmeric,Green chilli", "Quick Bite,Budget Pick", "Simple, warm, and quietly addictive."),
+                item("Kharada Pundi", "kharada-pundi", "Soft rice bites with a spicy seasoning and coconut touch, served snack-style.", 119.0, "https://images.unsplash.com/photo-1516685018646-549d52b2d9f9?w=1200&q=80", categories.get("snacks"), true, 3, 4.5, 57, 19, "Rice flour,Chilli,Coconut,Mustard", "Spicy,Homestyle", "A soft bite with a bright chilli kick.")
+        );
+
+        for (Item seededItem : seededItems) {
+            Item item = existingBySlug.getOrDefault(seededItem.getSlug(), seededItem);
+            item.setName(seededItem.getName());
+            item.setSlug(seededItem.getSlug());
+            item.setDescription(seededItem.getDescription());
+            item.setPrice(seededItem.getPrice());
+            item.setImageUrl(seededItem.getImageUrl());
+            item.setCategory(seededItem.getCategory());
+            item.setVeg(seededItem.isVeg());
+            item.setSpiceLevel(seededItem.getSpiceLevel());
+            item.setAvailable(true);
+            item.setRating(seededItem.getRating());
+            item.setReviewCount(seededItem.getReviewCount());
+            item.setDeliveryTimeMinutes(seededItem.getDeliveryTimeMinutes());
+            item.setIngredients(seededItem.getIngredients());
+            item.setTags(seededItem.getTags());
+            item.setHighlight(seededItem.getHighlight());
+            item.setAvailable(true);
+            existingBySlug.put(item.getSlug(), item);
         }
 
-        itemRepository.saveAll(List.of(
-                item("Jolada Rotti Signature Meal", "jolada-rotti-signature-meal", "Hand-pressed millet rotis paired with ennegayi and shenga chutney.", 189.0, "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80", categories.get("jolada-rotti"), true, 2),
-                item("Ennegayi Curry Bowl", "ennegayi-curry-bowl", "Baby brinjals simmered in a roasted peanut and sesame masala.", 169.0, "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=1200&q=80", categories.get("north-karnataka-meals"), true, 3),
-                item("Girmit Street Mix", "girmit-street-mix", "Hubballi-style puffed rice snack with crunch and spice.", 119.0, "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80", categories.get("street-food"), true, 2),
-                item("Shenga Chutney Podi", "shenga-chutney-podi", "Roasted groundnut chutney powder with a smoky finish.", 79.0, "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=1200&q=80", categories.get("chutney"), true, 2),
-                item("Dharwad Peda Premium Box", "dharwad-peda-premium-box", "Classic Dharwad peda packed for gifting.", 249.0, "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=1200&q=80", categories.get("sweets"), true, 1),
-                item("Kayi Holige Dessert Fold", "kayi-holige-dessert-fold", "Festive holige with coconut and jaggery filling.", 139.0, "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?w=1200&q=80", categories.get("holige"), true, 1),
-                item("Ragi Mudde Saaru Combo", "ragi-mudde-saaru-combo", "Wholesome millet dumplings paired with rustic saaru.", 179.0, "https://images.unsplash.com/photo-1547592180-85f173990554?w=1200&q=80", categories.get("north-karnataka-meals"), true, 2),
-                item("Mandakki Oggarane Quick Bowl", "mandakki-oggarane-quick-bowl", "Tempered puffed rice bowl for a quick regional bite.", 109.0, "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&q=80", categories.get("street-food"), true, 2),
-                item("Hurali Saaru Soul Bowl", "hurali-saaru-soul-bowl", "Peppery horse gram broth for light dinners.", 149.0, "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=1200&q=80", categories.get("north-karnataka-meals"), true, 3),
-                item("Badnekayi Palya Home Thali", "badnekayi-palya-home-thali", "Home-style brinjal stir-fry with comforting sides.", 159.0, "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=1200&q=80", categories.get("north-karnataka-meals"), true, 2),
-                item("Kharada Pundi Spice Bites", "kharada-pundi-spice-bites", "Steamed rice bites with a bold spice finish.", 129.0, "https://images.unsplash.com/photo-1516685018646-549d52b2d9f9?w=1200&q=80", categories.get("street-food"), true, 3)
-        ));
+        itemRepository.saveAll(existingBySlug.values());
     }
 
-    private Category category(String name, String slug) {
+    private Category category(String name, String slug, String description, String imageUrl) {
         Category category = new Category();
         category.setName(name);
         category.setSlug(slug);
+        category.setDescription(description);
+        category.setImageUrl(imageUrl);
         return category;
     }
 
-    private Item item(String name, String slug, String description, double price, String imageUrl, Category category, boolean isVeg, int spiceLevel) {
+    private Item item(String name, String slug, String description, double price, String imageUrl, Category category, boolean isVeg, int spiceLevel, double rating, int reviewCount, int deliveryTimeMinutes, String ingredients, String tags, String highlight) {
         return Item.builder()
                 .name(name)
                 .slug(slug)
@@ -122,6 +142,12 @@ public class DataInitializer {
                 .category(category)
                 .isVeg(isVeg)
                 .spiceLevel(spiceLevel)
+                .rating(rating)
+                .reviewCount(reviewCount)
+                .deliveryTimeMinutes(deliveryTimeMinutes)
+                .ingredients(ingredients)
+                .tags(tags)
+                .highlight(highlight)
                 .isAvailable(true)
                 .build();
     }

@@ -46,6 +46,9 @@ public class AddressServiceImpl implements AddressService {
         address.setCity(request.getCity());
         address.setState(request.getState());
         address.setPincode(request.getPincode());
+        address.setRecipientName(request.getRecipientName());
+        address.setRecipientPhone(request.getRecipientPhone());
+        address.setAddressType(request.getAddressType());
 
         boolean shouldBeDefault = request.isDefault() || addressRepository.findByUserIdAndIsDeletedFalse(userId).isEmpty();
         if (shouldBeDefault) {
@@ -55,6 +58,13 @@ public class AddressServiceImpl implements AddressService {
 
         Address savedAddress = addressRepository.save(address);
         return mapToResponse(savedAddress);
+    }
+
+    @Override
+    @Transactional
+    public AddressResponse updateAddress(Long userId, Long addressId, AddressRequest request) {
+        request.setId(addressId);
+        return saveAddress(userId, request);
     }
 
     @Override
@@ -89,9 +99,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     private void resetDefaultAddresses(Long userId) {
-        List<Address> addresses = addressRepository.findByUserIdAndIsDeletedFalse(userId);
-        addresses.forEach(a -> a.setDefault(false));
-        addressRepository.saveAll(addresses);
+        addressRepository.clearDefaultAddresses(userId);
     }
 
     private AddressResponse mapToResponse(Address address) {
@@ -103,6 +111,9 @@ public class AddressServiceImpl implements AddressService {
         response.setState(address.getState());
         response.setPincode(address.getPincode());
         response.setDefault(address.isDefault());
+        response.setRecipientName(address.getRecipientName());
+        response.setRecipientPhone(address.getRecipientPhone());
+        response.setAddressType(address.getAddressType());
         return response;
     }
 }

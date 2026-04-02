@@ -1,4 +1,5 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { authService } from '../services/userService';
 
 const AuthContext = createContext(undefined);
 const AUTH_STORAGE_KEY = 'manemade_user';
@@ -26,7 +27,17 @@ export function AuthProvider({ children }) {
       token: authState?.token || null,
       user: authState?.user || null,
       isAuthenticated: Boolean(authState?.token),
-      login: setSession,
+      login: async (credentials) => {
+        const response = await authService.login(credentials);
+        setSession(response.data);
+        return response.data;
+      },
+      register: async (userData) => {
+        const response = await authService.register(userData);
+        setSession(response.data);
+        return response.data;
+      },
+      updateUser: (user) => setSession({ ...authState, user }),
       logout: () => setSession(null),
     }),
     [authState],

@@ -22,6 +22,15 @@ public class Address {
     private String state;
     private String pincode;
 
+    @Column(name = "recipient_name")
+    private String recipientName;
+
+    @Column(name = "recipient_phone")
+    private String recipientPhone;
+
+    @Column(name = "address_type")
+    private String addressType; // Home, Work, Other
+
     @Column(name = "is_default")
     private boolean isDefault = false;
 
@@ -93,6 +102,30 @@ public class Address {
 
     public void setPincode(String pincode) {
         this.pincode = pincode;
+    }
+
+    public String getRecipientName() {
+        return recipientName;
+    }
+
+    public void setRecipientName(String recipientName) {
+        this.recipientName = recipientName;
+    }
+
+    public String getRecipientPhone() {
+        return recipientPhone;
+    }
+
+    public void setRecipientPhone(String recipientPhone) {
+        this.recipientPhone = recipientPhone;
+    }
+
+    public String getAddressType() {
+        return addressType;
+    }
+
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
     }
 
     public boolean isDefault() {

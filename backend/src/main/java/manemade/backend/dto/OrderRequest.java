@@ -17,6 +17,8 @@ public class OrderRequest {
     @Valid
     private List<OrderItemRequest> items;
 
+    private String paymentMode;
+
     public OrderRequest() {}
 
     public Long getUserId() { return userId; }
@@ -27,6 +29,9 @@ public class OrderRequest {
 
     public List<OrderItemRequest> getItems() { return items; }
     public void setItems(List<OrderItemRequest> items) { this.items = items; }
+
+    public String getPaymentMode() { return paymentMode; }
+    public void setPaymentMode(String paymentMode) { this.paymentMode = paymentMode; }
 
     public static class OrderItemRequest {
         @NotNull(message = "Item id is required")

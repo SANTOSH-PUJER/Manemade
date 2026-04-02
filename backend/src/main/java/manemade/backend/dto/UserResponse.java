@@ -6,15 +6,17 @@ public class UserResponse {
     private String lastName;
     private String email;
     private String mobileNumber;
+    private String avatarUrl;
 
     public UserResponse() {}
 
-    public UserResponse(Long id, String firstName, String lastName, String email, String mobileNumber) {
+    public UserResponse(Long id, String firstName, String lastName, String email, String mobileNumber, String avatarUrl) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.mobileNumber = mobileNumber;
+        this.avatarUrl = avatarUrl;
     }
 
     public Long getId() { return id; }
@@ -32,6 +34,9 @@ public class UserResponse {
     public String getMobileNumber() { return mobileNumber; }
     public void setMobileNumber(String mobileNumber) { this.mobileNumber = mobileNumber; }
 
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+
     public static UserResponseBuilder builder() {
         return new UserResponseBuilder();
     }
@@ -42,6 +47,7 @@ public class UserResponse {
         private String lastName;
         private String email;
         private String mobileNumber;
+        private String avatarUrl;
 
         public UserResponseBuilder id(Long id) {
             this.id = id;
@@ -68,8 +74,13 @@ public class UserResponse {
             return this;
         }
 
+        public UserResponseBuilder avatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
+            return this;
+        }
+
         public UserResponse build() {
-            return new UserResponse(id, firstName, lastName, email, mobileNumber);
+            return new UserResponse(id, firstName, lastName, email, mobileNumber, avatarUrl);
         }
     }
 }

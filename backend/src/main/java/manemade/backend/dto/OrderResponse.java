@@ -10,6 +10,8 @@ public class OrderResponse {
     private double totalAmount;
     private String status;
     private String paymentMode;
+    private String paymentStatus;
+    private Long paymentId;
     private String transactionId;
     private List<OrderItemResponse> items;
     private LocalDateTime createdTs;
@@ -33,6 +35,10 @@ public class OrderResponse {
     public void setStatus(String status) { this.status = status; }
     public String getPaymentMode() { return paymentMode; }
     public void setPaymentMode(String paymentMode) { this.paymentMode = paymentMode; }
+    public String getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
+    public Long getPaymentId() { return paymentId; }
+    public void setPaymentId(Long paymentId) { this.paymentId = paymentId; }
     public String getTransactionId() { return transactionId; }
     public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
     public List<OrderItemResponse> getItems() { return items; }
@@ -80,6 +86,8 @@ public class OrderResponse {
         public OrderResponseBuilder totalAmount(double totalAmount) { instance.setTotalAmount(totalAmount); return this; }
         public OrderResponseBuilder status(String status) { instance.setStatus(status); return this; }
         public OrderResponseBuilder paymentMode(String paymentMode) { instance.setPaymentMode(paymentMode); return this; }
+        public OrderResponseBuilder paymentStatus(String paymentStatus) { instance.setPaymentStatus(paymentStatus); return this; }
+        public OrderResponseBuilder paymentId(Long paymentId) { instance.setPaymentId(paymentId); return this; }
         public OrderResponseBuilder transactionId(String transactionId) { instance.setTransactionId(transactionId); return this; }
         public OrderResponseBuilder items(List<OrderItemResponse> items) { instance.setItems(items); return this; }
         public OrderResponseBuilder createdTs(LocalDateTime createdTs) { instance.setCreatedTs(createdTs); return this; }

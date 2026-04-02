@@ -33,6 +33,11 @@ public class ItemController {
         return ResponseEntity.ok(itemService.getAllItems());
     }
 
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<ItemResponse> getBySlug(@PathVariable String slug) {
+        return ResponseEntity.ok(itemService.getItemBySlug(slug));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ItemResponse> create(@RequestBody Item item) {
         return ResponseEntity.ok(itemService.createItem(item));

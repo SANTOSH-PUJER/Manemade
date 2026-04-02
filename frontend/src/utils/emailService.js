@@ -10,12 +10,18 @@ export const sendOTPEmail = async (userEmail, otpCode) => {
     message: `Your Mane Made verification code is: ${otpCode}`
   };
 
+  const EMAILJS_CONFIG = {
+    SERVICE_ID: 'service_qjiad7x',
+    TEMPLATE_ID: 'template_1egdsk8',
+    PUBLIC_KEY: 'HbOERmMSSdUKqZcT0',
+  };
+
   try {
     return await emailjs.send(
-      'YOUR_SERVICE_ID',
-      'YOUR_TEMPLATE_ID',
+      EMAILJS_CONFIG.SERVICE_ID,
+      EMAILJS_CONFIG.TEMPLATE_ID,
       templateParams,
-      'YOUR_PUBLIC_KEY'
+      EMAILJS_CONFIG.PUBLIC_KEY
     );
   } catch (error) {
     console.error('EmailJS Error:', error);

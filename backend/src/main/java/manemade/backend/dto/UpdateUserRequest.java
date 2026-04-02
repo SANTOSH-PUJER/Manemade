@@ -19,6 +19,8 @@ public class UpdateUserRequest {
     @Email(message = "Invalid email format")
     private String email;
 
+    private String avatarUrl;
+
     public UpdateUserRequest() {}
 
     public String getFirstName() { return firstName; }
@@ -32,4 +34,7 @@ public class UpdateUserRequest {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
 }

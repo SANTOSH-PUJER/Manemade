@@ -8,6 +8,9 @@ public class AddressResponse {
     private String state;
     private String pincode;
     private boolean isDefault;
+    private String recipientName;
+    private String recipientPhone;
+    private String addressType;
 
     public AddressResponse() {}
 
@@ -31,4 +34,13 @@ public class AddressResponse {
 
     public boolean isDefault() { return isDefault; }
     public void setDefault(boolean aDefault) { isDefault = aDefault; }
+
+    public String getRecipientName() { return recipientName; }
+    public void setRecipientName(String recipientName) { this.recipientName = recipientName; }
+
+    public String getRecipientPhone() { return recipientPhone; }
+    public void setRecipientPhone(String recipientPhone) { this.recipientPhone = recipientPhone; }
+
+    public String getAddressType() { return addressType; }
+    public void setAddressType(String addressType) { this.addressType = addressType; }
 }

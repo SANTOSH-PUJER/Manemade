@@ -26,6 +26,12 @@ public class Item {
     @Column(nullable = false)
     private double price;
 
+    @Column(nullable = false)
+    private double rating = 4.5;
+
+    @Column(name = "review_count", nullable = false)
+    private int reviewCount = 0;
+
     @Column(name = "is_veg", nullable = false)
     private boolean isVeg = true;
 
@@ -34,6 +40,18 @@ public class Item {
 
     @Column(name = "is_available", nullable = false)
     private boolean isAvailable = true;
+
+    @Column(name = "delivery_time_minutes", nullable = false)
+    private int deliveryTimeMinutes = 25;
+
+    @Column(length = 2000)
+    private String ingredients;
+
+    @Column(length = 1000)
+    private String tags;
+
+    @Column(length = 500)
+    private String highlight;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -102,6 +120,22 @@ public class Item {
         this.price = price;
     }
 
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public int getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(int reviewCount) {
+        this.reviewCount = reviewCount;
+    }
+
     public Category getCategory() {
         return category;
     }
@@ -116,6 +150,14 @@ public class Item {
     public void setSpiceLevel(int spiceLevel) { this.spiceLevel = spiceLevel; }
     public boolean isAvailable() { return isAvailable; }
     public void setAvailable(boolean available) { isAvailable = available; }
+    public int getDeliveryTimeMinutes() { return deliveryTimeMinutes; }
+    public void setDeliveryTimeMinutes(int deliveryTimeMinutes) { this.deliveryTimeMinutes = deliveryTimeMinutes; }
+    public String getIngredients() { return ingredients; }
+    public void setIngredients(String ingredients) { this.ingredients = ingredients; }
+    public String getTags() { return tags; }
+    public void setTags(String tags) { this.tags = tags; }
+    public String getHighlight() { return highlight; }
+    public void setHighlight(String highlight) { this.highlight = highlight; }
 
     public static class ItemBuilder {
         private Item instance = new Item();
@@ -145,6 +187,16 @@ public class Item {
             return this;
         }
 
+        public ItemBuilder rating(double rating) {
+            instance.setRating(rating);
+            return this;
+        }
+
+        public ItemBuilder reviewCount(int reviewCount) {
+            instance.setReviewCount(reviewCount);
+            return this;
+        }
+
         public ItemBuilder category(Category category) {
             instance.setCategory(category);
             return this;
@@ -162,6 +214,26 @@ public class Item {
 
         public ItemBuilder isAvailable(boolean isAvailable) {
             instance.setAvailable(isAvailable);
+            return this;
+        }
+
+        public ItemBuilder deliveryTimeMinutes(int deliveryTimeMinutes) {
+            instance.setDeliveryTimeMinutes(deliveryTimeMinutes);
+            return this;
+        }
+
+        public ItemBuilder ingredients(String ingredients) {
+            instance.setIngredients(ingredients);
+            return this;
+        }
+
+        public ItemBuilder tags(String tags) {
+            instance.setTags(tags);
+            return this;
+        }
+
+        public ItemBuilder highlight(String highlight) {
+            instance.setHighlight(highlight);
             return this;
         }
 

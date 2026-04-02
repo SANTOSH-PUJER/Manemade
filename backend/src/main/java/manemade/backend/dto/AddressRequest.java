@@ -21,6 +21,15 @@ public class AddressRequest {
     
     private boolean isDefault;
 
+    @NotBlank(message = "Recipient name is required")
+    private String recipientName;
+
+    @NotBlank(message = "Recipient phone is required")
+    private String recipientPhone;
+
+    @NotBlank(message = "Address type is required")
+    private String addressType;
+
     public AddressRequest() {}
 
     public Long getId() { return id; }
@@ -43,4 +52,13 @@ public class AddressRequest {
 
     public boolean isDefault() { return isDefault; }
     public void setDefault(boolean aDefault) { isDefault = aDefault; }
+
+    public String getRecipientName() { return recipientName; }
+    public void setRecipientName(String recipientName) { this.recipientName = recipientName; }
+
+    public String getRecipientPhone() { return recipientPhone; }
+    public void setRecipientPhone(String recipientPhone) { this.recipientPhone = recipientPhone; }
+
+    public String getAddressType() { return addressType; }
+    public void setAddressType(String addressType) { this.addressType = addressType; }
 }
