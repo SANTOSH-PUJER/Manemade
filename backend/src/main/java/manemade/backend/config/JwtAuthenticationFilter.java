@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // Fall back to session-based auth if the header is missing (e.g., refresh)
             filterChain.doFilter(request, response);
             return;
         }

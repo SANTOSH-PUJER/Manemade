@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Eye, EyeOff, ShieldCheck, Mail, Lock, User, Phone } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -21,10 +21,16 @@ function Auth({ mode: initialMode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { showToast } = useToast();
-  const { login, register } = useAuth();
+  const { login, register, isAuthenticated, loadingAuth } = useAuth();
   const redirectTo = location.state?.from || '/';
   const { menuItems } = useMenuData();
   const showcaseImage = menuItems[4]?.image || menuItems[0]?.image;
+  
+  useEffect(() => {
+    if (!loadingAuth && isAuthenticated) {
+      navigate(redirectTo, { replace: true });
+    }
+  }, [isAuthenticated, loadingAuth, navigate, redirectTo]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -67,12 +73,23 @@ function Auth({ mode: initialMode }) {
         });
       }
       
-      showToast({ 
-        title: mode === 'login' ? 'Welcome back!' : 'Account created!', 
-        description: 'Happy ordering!',
-        tone: 'success' 
-      });
-      navigate(redirectTo, { replace: true });
+      if (mode === 'register') {
+        showToast({ 
+          title: 'Account created!', 
+          description: 'Please login with your new credentials.',
+          tone: 'success' 
+        });
+        setMode('login');
+        // Pre-fill email for login UX but clear other fields as needed
+        setFormData(prev => ({ ...prev, password: '' }));
+      } else {
+        showToast({ 
+          title: 'Welcome back!', 
+          description: 'Happy ordering!',
+          tone: 'success' 
+        });
+        navigate(redirectTo, { replace: true });
+      }
     } catch (error) {
       showToast({ title: 'Error', description: error.response?.data?.message || 'Authentication failed.' });
     } finally {
@@ -81,7 +98,7 @@ function Auth({ mode: initialMode }) {
   };
 
   return (
-    <div className="mx-auto max-w-[1200px] overflow-hidden rounded-[var(--radius-xl)] bg-[var(--surface)] shadow-[var(--shadow-strong)] lg:grid lg:grid-cols-2">
+    <div className="mx-auto max-w-[1200px] overflow-hidden rounded-[var(--radius-xl)] bg-white shadow-[var(--shadow-strong)] lg:grid lg:grid-cols-2 dark:bg-gray-900 transition-colors duration-500">
       {/* Left: Imagery */}
       <div className="relative hidden lg:block h-[800px]">
         <img 
@@ -106,12 +123,12 @@ function Auth({ mode: initialMode }) {
       <div className="flex flex-col p-8 sm:p-12 lg:p-16 overflow-y-auto max-h-[800px] scrollbar-hide">
         <div className="w-full max-w-sm mx-auto">
           {/* Tab Selection */}
-          <div className="mb-12 inline-flex w-full rounded-2xl bg-[var(--surface-muted)] p-1.5 shadow-inner">
+          <div className="mb-12 inline-flex w-full rounded-2xl bg-gray-100 p-1.5 shadow-inner dark:bg-gray-800">
             {['login', 'register'].map((t) => (
               <button
                 key={t}
                 onClick={() => { setMode(t); setErrors({}); }}
-                className={`flex-1 rounded-xl py-3 text-sm font-black uppercase tracking-widest transition-all duration-300 ${mode === t ? 'bg-white text-black shadow-lg' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}`}
+                className={`flex-1 rounded-xl py-3 text-sm font-black uppercase tracking-widest transition-all duration-300 ${mode === t ? 'bg-white text-gray-900 shadow-lg dark:bg-gray-700 dark:text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}
               >
                 {t}
               </button>
@@ -216,7 +233,7 @@ function Auth({ mode: initialMode }) {
 
               <div className="flex items-center gap-4 py-4">
                 <div className="h-px flex-1 bg-black/5 dark:bg-white/5" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Verified Entry</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)]">Verified Entry</span>
                 <div className="h-px flex-1 bg-black/5 dark:bg-white/5" />
               </div>
 

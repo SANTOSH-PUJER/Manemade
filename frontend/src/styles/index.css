@@ -2,36 +2,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fbf7f3;
-  --surface: #ffffff;
-  --surface-glass: rgba(255, 255, 255, 0.84);
-  --surface-muted: #f3ebe4;
-  --text-primary: #171311;
-  --text-secondary: #3e3531;
-  --text-muted: #6b605c;
-  --accent-strong: #ff5233;
-  --accent-soft: rgba(255, 82, 51, 0.12);
-  --accent-gradient: linear-gradient(135deg, #ff8235 0%, #ff5233 50%, #e6391a 100%);
-  --shadow-soft: 0 14px 36px -10px rgba(102, 52, 28, 0.12);
-  --shadow-strong: 0 28px 72px -16px rgba(102, 52, 28, 0.22);
-  --radius-xs: 12px;
-  --radius-sm: 16px;
-  --radius-md: 24px;
+  --background: #ffffff;
+  --surface: #f3f4f6;
+  --surface-glass: rgba(255, 255, 255, 0.9);
+  --surface-muted: #f3f4f6;
+  --border-light: rgba(17, 24, 39, 0.08);
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #374151;
+  --accent-primary: #ff6b00;
+  --accent-hover: #e65a00;
+  --accent-soft: rgba(255, 107, 0, 0.1);
+  --accent-gradient: linear-gradient(135deg, #ff8c37 0%, #ff6b00 100%);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 12px 24px -4px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 24px 48px -12px rgba(0, 0, 0, 0.15);
+  --shadow-glow: 0 0 24px -4px rgba(255, 107, 0, 0.3);
+  --radius-sm: 12px;
+  --radius-md: 20px;
   --radius-lg: 32px;
-  --radius-xl: 40px;
+  --radius-xl: 44px;
+  --radius-full: 9999px;
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dark {
-  --background: #0f172a;
-  --surface: #111827;
-  --surface-glass: rgba(17, 24, 39, 0.9);
+  --background: #111827;
+  --surface: #1f2937;
+  --surface-glass: rgba(17, 24, 39, 0.85);
   --surface-muted: #1f2937;
-  --text-primary: #f9fafb;
-  --text-secondary: #f3f4f6;
-  --text-muted: #9ca3af;
-  --accent-soft: rgba(255, 82, 51, 0.18);
-  --shadow-soft: 0 16px 44px -12px rgba(0, 0, 0, 0.45);
-  --shadow-strong: 0 30px 88px -18px rgba(0, 0, 0, 0.58);
+  --border-light: rgba(255, 255, 255, 0.08);
+  --text-primary: #ffffff;
+  --text-secondary: #d1d5db;
+  --text-muted: #d1d5db;
+  --accent-soft: rgba(255, 107, 0, 0.15);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 16px 32px -8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 24px 48px -12px rgba(0, 0, 0, 0.6);
 }
 
 @theme {
@@ -51,11 +59,12 @@
   body {
     margin: 0;
     min-width: 320px;
-    background: radial-gradient(circle at top left, rgba(255, 132, 83, 0.18), transparent 28%), radial-gradient(circle at bottom right, rgba(255, 208, 151, 0.12), transparent 30%), var(--background);
+    background-color: var(--background);
     color: var(--text-primary);
     font-family: var(--font-sans);
     color-scheme: light;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color var(--transition-base), color var(--transition-base);
+    -webkit-font-smoothing: antialiased;
   }
 
   .dark body {
@@ -75,17 +84,18 @@
 
 @layer components {
   .nav-dropdown-item {
-    @apply block rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)];
+    @apply block rounded-2xl px-4 py-3 text-sm font-bold text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)];
   }
 
   .detail-stat-card {
-    @apply flex items-center gap-3 rounded-[24px] border border-white/10 bg-[var(--surface-muted)] px-4 py-4;
+    @apply flex items-center gap-3 rounded-[24px] border border-black/5 bg-[var(--surface-muted)] px-4 py-4 dark:border-white/5;
   }
 
   .skeleton {
-    background: linear-gradient(90deg, rgba(255,255,255,0.35), rgba(255,255,255,0.62), rgba(255,255,255,0.35));
+    @apply bg-black/5 dark:bg-white/5 overflow-hidden relative;
+    background: linear-gradient(90deg, var(--surface-muted) 0%, var(--surface) 50%, var(--surface-muted) 100%);
     background-size: 200% 100%;
-    animation: shimmer 1.3s linear infinite;
+    animation: shimmer 1.5s linear infinite;
   }
 
   .no-scrollbar {
@@ -95,6 +105,26 @@
 
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  .glass-card {
+    @apply bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-[var(--shadow-lg)];
+  }
+
+  .premium-gradient {
+    background: linear-gradient(135deg, #FF6B00 0%, #FF8C37 50%, #FFB37C 100%);
+  }
+
+  .premium-shadow {
+    box-shadow: 0 20px 40px -12px rgba(255, 107, 0, 0.25);
+  }
+
+  .sidebar-item-active {
+    @apply bg-black text-white dark:bg-white dark:text-black shadow-xl scale-105;
+  }
+
+  .tab-transition {
+    @apply transition-all duration-300 ease-in-out;
   }
 }
 

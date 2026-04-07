@@ -57,7 +57,7 @@ function Orders() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-6 pt-24 pb-32">
+    <div className="mx-auto max-w-5xl px-6 pt-24 pb-32 bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-500">
       <div className="mb-12 flex items-center justify-between">
         <div className="space-y-2">
           <Badge variant="primary">History</Badge>
@@ -69,13 +69,13 @@ function Orders() {
       </div>
 
       {orders.length === 0 ? (
-        <Card className="flex flex-col items-center justify-center p-20 text-center space-y-6 bg-[var(--surface-muted)]/50 border-dashed border-2">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--surface)] shadow-xl text-[var(--text-muted)]">
+        <Card className="flex flex-col items-center justify-center p-20 text-center space-y-6 bg-gray-50 border-dashed border-2 dark:bg-gray-800/50">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-xl text-[var(--text-muted)] dark:bg-gray-800">
             <ShoppingBag size={32} />
           </div>
           <div className="space-y-2">
             <h3 className="text-2xl font-black">No orders found.</h3>
-            <p className="text-sm font-medium text-[var(--text-muted)] max-w-xs mx-auto">
+            <p className="text-sm font-bold text-[var(--text-secondary)] max-w-xs mx-auto">
               Once you place an order, it will appear here with real-time status updates.
             </p>
           </div>
@@ -100,7 +100,7 @@ function Orders() {
                     
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
-                         <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Order #{order.id}</p>
+                         <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)]">Order #{order.id}</p>
                          <div className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${getStatusColor(order.status)}`}>
                             {order.status}
                          </div>
@@ -108,7 +108,7 @@ function Orders() {
                       <h3 className="font-display text-2xl font-black truncate max-w-md">
                               {order.items?.map(i => i.itemName).join(', ') || 'Homemade order'}
                       </h3>
-                      <div className="flex items-center gap-4 text-xs font-bold text-[var(--text-muted)]">
+                      <div className="flex items-center gap-4 text-xs font-black text-[var(--text-secondary)]">
                          <span className="flex items-center gap-1.5"><Clock size={14} /> {new Date(order.createdTs).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                          <span className="h-1 w-1 rounded-full bg-black/10" />
                          <span className="flex items-center gap-1.5"><MapPin size={14} /> Local Pickup</span>
@@ -118,7 +118,7 @@ function Orders() {
 
                   <div className="flex border-t border-black/5 pt-8 lg:border-none lg:pt-0 items-center justify-between lg:justify-end gap-12">
                      <div className="text-left lg:text-right space-y-1">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Paid Amount</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)]">Paid Amount</p>
                         <p className="text-3xl font-black">₹{order.totalAmount}</p>
                      </div>
                      <button 

@@ -62,7 +62,7 @@ export default function Footer() {
               <ul className="space-y-4">
                 {section.links.map((link) => (
                   <li key={link.label}>
-                    <Link to={link.to} className="text-sm font-medium text-[var(--text-muted)] transition-colors hover:text-[var(--accent-strong)]">
+                    <Link to={link.to} className="text-sm font-bold text-[var(--text-secondary)] transition-colors hover:text-[var(--accent-strong)]">
                       {link.label}
                     </Link>
                   </li>
@@ -73,7 +73,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-20 flex flex-col items-center justify-between gap-6 border-t border-black/5 pt-8 dark:border-white/5 sm:flex-row">
-          <p className="text-xs font-medium text-[var(--text-muted)]">
+          <p className="text-xs font-bold text-[var(--text-secondary)]">
             © {new Date().getFullYear()} Manemade Food Delivery. All rights reserved.
           </p>
           <div className="flex items-center gap-6">

@@ -1,0 +1,27 @@
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Backend (Spring Boot / Maven)
+backend/target/
+backend/data/
+backend/.mvn/
+backend/*.err.log
+backend/*.out.log
+
+# Frontend (React / Vite / Node)
+frontend/node_modules/
+frontend/dist/
+frontend/.eslintcache
+frontend/*.log
+
+# Global Data (if any)
+data/
+temp/

@@ -1,86 +1,65 @@
 package manemade.backend.dto;
 
-import java.util.List;
 
 public class ItemResponse {
     private Long id;
-    private String slug;
-    private String name;
-    private String description;
+    private String itemSlug;
+    private String itemName;
+    private String shortDescription;
+    private String longDescription;
     private double price;
-    private String image;
+    private String itemImage;
     private Long categoryId;
     private String categoryName;
     private String categorySlug;
-    private double rating;
-    private int reviewCount;
-    private boolean isVeg;
-    private int spiceLevel;
     private boolean isAvailable;
-    private int deliveryTimeMinutes;
-    private List<String> ingredients;
-    private List<String> tags;
-    private String highlight;
+    private String quantity;
+    private Double attributePrice;
 
     public ItemResponse() {}
 
-    public ItemResponse(Long id, String slug, String name, String description, double price, String image, Long categoryId, String categoryName, String categorySlug, double rating, int reviewCount, boolean isVeg, int spiceLevel, boolean isAvailable, int deliveryTimeMinutes, List<String> ingredients, List<String> tags, String highlight) {
+    public ItemResponse(Long id, String itemSlug, String itemName, String shortDescription, String longDescription, double price, String itemImage, Long categoryId, String categoryName, String categorySlug, boolean isAvailable, String quantity, Double attributePrice) {
         this.id = id;
-        this.slug = slug;
-        this.name = name;
-        this.description = description;
+        this.itemSlug = itemSlug;
+        this.itemName = itemName;
+        this.shortDescription = shortDescription;
+        this.longDescription = longDescription;
         this.price = price;
-        this.image = image;
+        this.itemImage = itemImage;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.categorySlug = categorySlug;
-        this.rating = rating;
-        this.reviewCount = reviewCount;
-        this.isVeg = isVeg;
-        this.spiceLevel = spiceLevel;
         this.isAvailable = isAvailable;
-        this.deliveryTimeMinutes = deliveryTimeMinutes;
-        this.ingredients = ingredients;
-        this.tags = tags;
-        this.highlight = highlight;
+        this.quantity = quantity;
+        this.attributePrice = attributePrice;
     }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public String getSlug() { return slug; }
-    public void setSlug(String slug) { this.slug = slug; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getItemSlug() { return itemSlug; }
+    public void setItemSlug(String itemSlug) { this.itemSlug = itemSlug; }
+    public String getItemName() { return itemName; }
+    public void setItemName(String itemName) { this.itemName = itemName; }
+    public String getShortDescription() { return shortDescription; }
+    public void setShortDescription(String shortDescription) { this.shortDescription = shortDescription; }
+    public String getLongDescription() { return longDescription; }
+    public void setLongDescription(String longDescription) { this.longDescription = longDescription; }
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
-    public String getImage() { return image; }
-    public void setImage(String image) { this.image = image; }
+    public String getItemImage() { return itemImage; }
+    public void setItemImage(String itemImage) { this.itemImage = itemImage; }
     public Long getCategoryId() { return categoryId; }
     public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
     public String getCategoryName() { return categoryName; }
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
     public String getCategorySlug() { return categorySlug; }
     public void setCategorySlug(String categorySlug) { this.categorySlug = categorySlug; }
-    public double getRating() { return rating; }
-    public void setRating(double rating) { this.rating = rating; }
-    public int getReviewCount() { return reviewCount; }
-    public void setReviewCount(int reviewCount) { this.reviewCount = reviewCount; }
-    public boolean isVeg() { return isVeg; }
-    public void setVeg(boolean veg) { isVeg = veg; }
-    public int getSpiceLevel() { return spiceLevel; }
-    public void setSpiceLevel(int spiceLevel) { this.spiceLevel = spiceLevel; }
     public boolean isAvailable() { return isAvailable; }
     public void setAvailable(boolean available) { isAvailable = available; }
-    public int getDeliveryTimeMinutes() { return deliveryTimeMinutes; }
-    public void setDeliveryTimeMinutes(int deliveryTimeMinutes) { this.deliveryTimeMinutes = deliveryTimeMinutes; }
-    public List<String> getIngredients() { return ingredients; }
-    public void setIngredients(List<String> ingredients) { this.ingredients = ingredients; }
-    public List<String> getTags() { return tags; }
-    public void setTags(List<String> tags) { this.tags = tags; }
-    public String getHighlight() { return highlight; }
-    public void setHighlight(String highlight) { this.highlight = highlight; }
+    public String getQuantity() { return quantity; }
+    public void setQuantity(String quantity) { this.quantity = quantity; }
+    public Double getAttributePrice() { return attributePrice; }
+    public void setAttributePrice(Double attributePrice) { this.attributePrice = attributePrice; }
 
     public static ItemResponseBuilder builder() {
         return new ItemResponseBuilder();
@@ -88,45 +67,35 @@ public class ItemResponse {
 
     public static class ItemResponseBuilder {
         private Long id;
-        private String slug;
-        private String name;
-        private String description;
+        private String itemSlug;
+        private String itemName;
+        private String shortDescription;
+        private String longDescription;
         private double price;
-        private String image;
+        private String itemImage;
         private Long categoryId;
         private String categoryName;
         private String categorySlug;
-        private double rating;
-        private int reviewCount;
-        private boolean isVeg;
-        private int spiceLevel;
         private boolean isAvailable;
-        private int deliveryTimeMinutes;
-        private List<String> ingredients;
-        private List<String> tags;
-        private String highlight;
+        private String quantity;
+        private Double attributePrice;
 
         public ItemResponseBuilder id(Long id) { this.id = id; return this; }
-        public ItemResponseBuilder slug(String slug) { this.slug = slug; return this; }
-        public ItemResponseBuilder name(String name) { this.name = name; return this; }
-        public ItemResponseBuilder description(String description) { this.description = description; return this; }
+        public ItemResponseBuilder itemSlug(String itemSlug) { this.itemSlug = itemSlug; return this; }
+        public ItemResponseBuilder itemName(String itemName) { this.itemName = itemName; return this; }
+        public ItemResponseBuilder shortDescription(String shortDescription) { this.shortDescription = shortDescription; return this; }
+        public ItemResponseBuilder longDescription(String longDescription) { this.longDescription = longDescription; return this; }
         public ItemResponseBuilder price(double price) { this.price = price; return this; }
-        public ItemResponseBuilder image(String image) { this.image = image; return this; }
+        public ItemResponseBuilder itemImage(String itemImage) { this.itemImage = itemImage; return this; }
         public ItemResponseBuilder categoryId(Long categoryId) { this.categoryId = categoryId; return this; }
         public ItemResponseBuilder categoryName(String categoryName) { this.categoryName = categoryName; return this; }
         public ItemResponseBuilder categorySlug(String categorySlug) { this.categorySlug = categorySlug; return this; }
-        public ItemResponseBuilder rating(double rating) { this.rating = rating; return this; }
-        public ItemResponseBuilder reviewCount(int reviewCount) { this.reviewCount = reviewCount; return this; }
-        public ItemResponseBuilder isVeg(boolean isVeg) { this.isVeg = isVeg; return this; }
-        public ItemResponseBuilder spiceLevel(int spiceLevel) { this.spiceLevel = spiceLevel; return this; }
         public ItemResponseBuilder isAvailable(boolean isAvailable) { this.isAvailable = isAvailable; return this; }
-        public ItemResponseBuilder deliveryTimeMinutes(int deliveryTimeMinutes) { this.deliveryTimeMinutes = deliveryTimeMinutes; return this; }
-        public ItemResponseBuilder ingredients(List<String> ingredients) { this.ingredients = ingredients; return this; }
-        public ItemResponseBuilder tags(List<String> tags) { this.tags = tags; return this; }
-        public ItemResponseBuilder highlight(String highlight) { this.highlight = highlight; return this; }
+        public ItemResponseBuilder quantity(String quantity) { this.quantity = quantity; return this; }
+        public ItemResponseBuilder attributePrice(Double attributePrice) { this.attributePrice = attributePrice; return this; }
 
         public ItemResponse build() {
-            return new ItemResponse(id, slug, name, description, price, image, categoryId, categoryName, categorySlug, rating, reviewCount, isVeg, spiceLevel, isAvailable, deliveryTimeMinutes, ingredients, tags, highlight);
+            return new ItemResponse(id, itemSlug, itemName, shortDescription, longDescription, price, itemImage, categoryId, categoryName, categorySlug, isAvailable, quantity, attributePrice);
         }
     }
 }

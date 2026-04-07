@@ -74,8 +74,6 @@ public class CartResponse {
         private String itemSlug;
         private String image;
         private String categoryName;
-        private double rating;
-        private int deliveryTimeMinutes;
         private double unitPrice;
         private int quantity;
         private double lineTotal;
@@ -120,22 +118,6 @@ public class CartResponse {
             this.categoryName = categoryName;
         }
 
-        public double getRating() {
-            return rating;
-        }
-
-        public void setRating(double rating) {
-            this.rating = rating;
-        }
-
-        public int getDeliveryTimeMinutes() {
-            return deliveryTimeMinutes;
-        }
-
-        public void setDeliveryTimeMinutes(int deliveryTimeMinutes) {
-            this.deliveryTimeMinutes = deliveryTimeMinutes;
-        }
-
         public double getUnitPrice() {
             return unitPrice;
         }
@@ -160,4 +142,5 @@ public class CartResponse {
             this.lineTotal = lineTotal;
         }
     }
+
 }

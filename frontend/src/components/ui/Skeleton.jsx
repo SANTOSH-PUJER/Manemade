@@ -1,23 +1,14 @@
-export default function Skeleton({
-  variant = 'rectangular',
-  width = 'w-full',
+export default function Skeleton({ 
+  className = '', 
+  width = 'w-full', 
   height = 'h-4',
-  className = '',
-  ...props
+  variant = 'rectangular' 
 }) {
-  const rounded = variant === 'circular' ? 'rounded-full' : 'rounded-[var(--radius-sm)]';
+  const rounded = variant === 'circular' ? 'rounded-full' : 'rounded-2xl';
+  
   return (
     <div
-      className={`
-        relative overflow-hidden bg-[var(--surface-muted)]
-        ${rounded}
-        ${width}
-        ${height}
-        ${className}
-      `}
-      {...props}
-    >
-      <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/40 to-transparent dark:via-white/5 animate-[shimmer_1.5s_infinite]" />
-    </div>
+      className={`skeleton ${rounded} ${width} ${height} ${className} opacity-40 dark:opacity-10`}
+    />
   );
 }

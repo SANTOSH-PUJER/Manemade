@@ -18,12 +18,12 @@ function HeroSection({ query, suggestions, onQueryChange, onSearch, heroImage, s
 
         <div className="space-y-6">
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-display text-5xl font-black leading-[1.1] tracking-tight sm:text-7xl"
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.21, 0.45, 0.32, 0.9] }}
+            className="font-display text-6xl font-black leading-tight tracking-tight sm:text-8xl"
           >
-            Homemade flavors, modern comfort, and a cleaner way to order.
+            Fresh Homemade Food <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-primary)] to-amber-500">Delivered.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -42,23 +42,23 @@ function HeroSection({ query, suggestions, onQueryChange, onSearch, heroImage, s
           transition={{ duration: 0.5, delay: 0.3 }}
           className="relative max-w-2xl group"
         >
-          <div className="flex items-center gap-2 rounded-[var(--radius-md)] border border-black/5 bg-[var(--surface)] p-2 shadow-[var(--shadow-strong)] transition-all group-focus-within:border-[var(--accent-strong)]/40 dark:border-white/5">
-            <div className="pl-4 text-[var(--text-muted)]">
-              <Search size={22} />
+          <div className="flex items-center gap-2 rounded-[var(--radius-md)] border border-black/5 bg-[var(--surface-glass)] p-2.5 shadow-[var(--shadow-lg)] backdrop-blur-xl transition-all group-focus-within:ring-2 group-focus-within:ring-[var(--accent-primary)]/40 dark:border-white/10 dark:bg-white/5">
+            <div className="pl-4 text-[var(--accent-primary)]">
+              <Search size={24} />
             </div>
             <input
               type="text"
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
-              placeholder="Search for Jolada Rotti, Ennegayi, or Snacks..."
-              className="flex-1 bg-transparent py-4 px-2 text-lg font-medium placeholder:text-[var(--text-muted)]/60 focus:outline-none"
+              placeholder="What are you craving today? e.g. Jolada Rotti"
+              className="flex-1 bg-transparent py-4 px-3 text-lg font-bold placeholder:text-[var(--text-secondary)] focus:outline-none"
             />
             <Button
               size="lg"
-              className="rounded-[var(--radius-sm)]"
+              className="rounded-[var(--radius-sm)] px-10 py-5 text-[15px] font-black uppercase tracking-widest shadow-xl shadow-[var(--accent-primary)]/30 hover:scale-[1.02]"
               onClick={onSearch}
             >
-              Discover
+              Browse Menu
             </Button>
           </div>
 
@@ -112,33 +112,36 @@ function HeroSection({ query, suggestions, onQueryChange, onSearch, heroImage, s
 
       {/* Visual Column */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="relative perspective-1000 hidden lg:block"
+        initial={{ opacity: 0, x: 40 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+        className="relative perspective-2000 hidden lg:block"
       >
-        <div className="relative z-10 overflow-hidden rounded-[var(--radius-xl)] border-[12px] border-white bg-white/20 shadow-[var(--shadow-strong)] dark:border-white/10">
+        <div className="relative z-10 overflow-hidden rounded-[var(--radius-xl)] border-[16px] border-white bg-white/20 shadow-[var(--shadow-lg)] backdrop-blur-sm dark:border-white/10">
           <img
-            src={heroImage || 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80'}
-            alt="Premium Regional Food"
-            className="h-[600px] w-full object-cover transition-transform duration-700 hover:scale-105"
+            src={heroImage || "https://images.unsplash.com/photo-1547928576-965beedf769d?q=80&w=1200&auto=format&fit=crop"}
+            alt="Fresh Homemade Food"
+            className="h-[650px] w-full object-cover transition-transform duration-1000 hover:scale-110"
+            onError={(e) => {
+              e.target.src = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000&auto=format&fit=crop";
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-          {/* Floaters */}
-          <div className="absolute bottom-8 left-8 right-8 flex items-center justify-between gap-4 rounded-[var(--radius-lg)] bg-[var(--surface-glass)]/95 p-6 shadow-2xl backdrop-blur-xl">
+          {/* Premium Floater: Stats */}
+          <div className="absolute -bottom-8 -left-8 right-8 flex items-center justify-around gap-6 rounded-[var(--radius-lg)] border border-white/20 bg-white/70 p-8 shadow-2xl backdrop-blur-2xl dark:bg-black/60">
             {stats.map((stat, i) => (
-              <div key={i} className="text-center">
-                <p className="text-2xl font-black text-[var(--accent-strong)]">{stat.value}</p>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{stat.label}</p>
+              <div key={i} className="text-center group-hover:scale-110 transition-transform">
+                <p className="text-3xl font-black text-[var(--accent-primary)]">{stat.value}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)]">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Background Accents */}
-        <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-[var(--accent-strong)]/10 blur-[120px]" />
-        <div className="absolute -bottom-20 -left-20 h-96 w-96 rounded-full bg-amber-500/10 blur-[120px]" />
+        {/* Ambient Glows */}
+        <div className="absolute -right-32 -top-32 h-[500px] w-[500px] rounded-full bg-[var(--accent-primary)]/15 blur-[120px] animate-pulse" />
+        <div className="absolute -bottom-32 -left-32 h-[500px] w-[500px] rounded-full bg-orange-500/10 blur-[120px]" />
       </motion.div>
     </section>
   );

@@ -10,8 +10,8 @@ import Skeleton from '../components/ui/Skeleton';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { orderService } from '../services/dataService';
 import { addressService } from '../services/userService';
-import api from '../services/userService';
 
 const paymentOptions = [
   { id: 'upi', label: 'UPI', icon: Smartphone, description: 'Pay via PhonePe, GPay' },
@@ -57,7 +57,7 @@ function Checkout() {
 
     setPlacingOrder(true);
     try {
-      const response = await api.post('/order/place', {
+      const response = await orderService.placeOrder({
         userId: user.id,
         addressId: selectedAddressId,
         paymentMode: paymentMethod,

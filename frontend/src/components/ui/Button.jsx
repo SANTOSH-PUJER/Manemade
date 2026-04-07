@@ -1,18 +1,18 @@
 import { motion } from 'framer-motion';
 
 const variants = {
-  primary: 'bg-[var(--accent-gradient)] text-white shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-strong)]',
-  secondary: 'bg-[var(--surface-muted)] text-[var(--text-primary)] shadow-[var(--shadow-soft)] hover:bg-[color-mix(in_srgb,var(--surface-muted),var(--text-primary)_7%)]',
-  outline: 'border border-black/10 text-[var(--text-primary)] hover:bg-[var(--surface-muted)] dark:border-white/10',
-  ghost: 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-muted)]',
+  primary: 'bg-orange-500 text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600',
+  secondary: 'bg-[var(--surface-muted)] text-[var(--text-primary)] hover:bg-[color-mix(in_srgb,var(--surface-muted),var(--text-primary)_7%)]',
+  outline: 'border-2 border-black/8 text-[var(--text-primary)] hover:border-[var(--accent-primary)] hover:text-[var(--accent-primary)] dark:border-white/10',
+  ghost: 'text-[var(--text-secondary)] hover:text-[var(--accent-primary)] hover:bg-[var(--accent-soft)]',
   danger: 'bg-rose-500 text-white shadow-lg shadow-rose-500/20 hover:bg-rose-600',
 };
 
 const sizes = {
-  sm: 'px-3 py-1.5 text-xs',
-  md: 'px-5 py-2.5 text-sm',
-  lg: 'px-8 py-3.5 text-base',
-  icon: 'p-2.5',
+  sm: 'px-4 py-2 text-xs font-black uppercase tracking-widest',
+  md: 'px-6 py-3 text-sm font-black uppercase tracking-widest',
+  lg: 'px-10 py-5 text-base font-black uppercase tracking-widest',
+  icon: 'p-3',
 };
 
 export default function Button({

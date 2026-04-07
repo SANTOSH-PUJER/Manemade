@@ -35,8 +35,8 @@ function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-in-out ${isScrolled
-          ? 'border-b border-black/5 bg-white py-3 shadow-lg dark:border-white/5 dark:bg-[#111827]'
-          : 'bg-transparent py-5'
+          ? 'border-b border-black/5 bg-white py-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-2xl dark:border-white/5 dark:bg-gray-900'
+          : 'bg-transparent py-6'
         }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-6 lg:px-12">
@@ -44,7 +44,7 @@ function Navbar() {
           <Link to="/" className="group flex items-center transition-all duration-300 ml-2">
             <div className="relative overflow-hidden transition-transform duration-300 group-hover:scale-105">
               <img 
-                src="/images/ManeMade-logo.png" 
+                src="/images/logo/ManeMade-logo.png" 
                 alt="Manemade Logo" 
                 className="h-10 w-auto object-contain sm:h-12"
               />
@@ -52,16 +52,16 @@ function Navbar() {
           </Link>
         </div>
 
-        <div className="hidden lg:flex items-center gap-2 rounded-full border border-black/6 bg-[var(--surface-glass)] px-2 py-1.5 shadow-[var(--shadow-soft)] dark:border-white/8">
+        <div className="hidden lg:flex items-center gap-1 rounded-full border border-white/20 bg-[var(--surface-glass)] p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-md dark:border-white/5">
           {navLinks.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) => `
-                rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-300
+                rounded-full px-7 py-2.5 text-xs font-black uppercase tracking-widest transition-all duration-300
                 ${isActive
-                  ? 'bg-[var(--surface)] text-[var(--text-primary)] shadow-[var(--shadow-soft)]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30 ring-2 ring-orange-500/20'
+                  : 'text-[var(--text-secondary)] hover:text-orange-600 hover:bg-orange-500/5'
                 }
               `}
             >
@@ -75,12 +75,12 @@ function Navbar() {
 
           <Link
             to={isAuthenticated ? '/checkout' : '/login'}
-            className="group relative flex h-11 w-11 items-center justify-center rounded-[var(--radius-sm)] border border-black/8 bg-[var(--surface)] text-[var(--text-primary)] shadow-[var(--shadow-soft)] transition-all hover:border-[var(--accent-strong)]/30 hover:shadow-[var(--shadow-strong)] dark:border-white/8"
+            className="group relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-[var(--surface)] text-[var(--text-primary)] shadow-[var(--shadow-sm)] transition-all hover:scale-110 hover:border-[var(--accent-primary)]/40 hover:shadow-[0_8px_20px_rgba(255,107,0,0.2)] dark:border-white/10"
             aria-label="Cart"
           >
-            <ShoppingBag size={22} />
+            <ShoppingBag size={22} strokeWidth={2.5} />
             {cartCount > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--accent-strong)] px-1 text-[10px] font-bold text-white shadow-lg shadow-[var(--accent-strong)]/30 group-hover:scale-110 transition-transform">
+              <span className="absolute -right-2 -top-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--accent-primary)] px-1 text-[10px] font-black text-white shadow-lg shadow-[var(--accent-primary)]/30 group-hover:scale-125 transition-transform">
                 {cartCount}
               </span>
             )}

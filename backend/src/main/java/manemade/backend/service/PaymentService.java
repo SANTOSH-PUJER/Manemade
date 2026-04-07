@@ -42,6 +42,25 @@ public class PaymentService {
         return mapToResponse(payment);
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    public PaymentResponse processPayment(manemade.backend.dto.PaymentRequest request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Order order = orderRepository.findById(request.getOrderId())
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        Payment payment = new Payment();
+        payment.setUser(user);
+        payment.setOrder(order);
+        payment.setAmount(request.getAmount());
+        payment.setMethod(request.getMethod());
+        payment.setStatus(request.getStatus() != null ? request.getStatus() : "SUCCESS");
+        payment.setTransactionId(request.getTransactionId());
+        payment.setPaidAt(java.time.LocalDateTime.now());
+
+        return mapToResponse(paymentRepository.save(payment));
+    }
+
     public PaymentResponse mapToResponse(Payment payment) {
         PaymentResponse response = new PaymentResponse();
         response.setId(payment.getId());

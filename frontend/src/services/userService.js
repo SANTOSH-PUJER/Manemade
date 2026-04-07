@@ -4,21 +4,12 @@ const AUTH_STORAGE_KEY = 'manemade_user';
 
 const api = axios.create({
   baseURL: 'http://localhost:8081/api',
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const session = JSON.parse(localStorage.getItem(AUTH_STORAGE_KEY) || 'null');
-    if (session?.token) {
-      config.headers.Authorization = `Bearer ${session.token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
 
 export const authService = {
   register: (userData) => api.post('/user/register', userData),
@@ -28,6 +19,8 @@ export const authService = {
   resetPassword: (resetData) => api.post('/user/reset-password', resetData),
   getUserProfile: (id) => api.get(`/user/${id}`),
   updateUserProfile: (id, userData) => api.put(`/user/${id}`, userData),
+  getMe: () => api.get('/user/me'),
+  logout: () => api.post('/user/logout'),
 };
 
 export const addressService = {
@@ -39,7 +32,7 @@ export const addressService = {
 };
 
 export const categoryService = {
-  getStats: () => api.get('/category/all'),
+  getStats: () => api.get('/categories/all'),
 };
 
 export default api;

@@ -4,7 +4,6 @@ import { useToast } from './ToastContext';
 import { cartService } from '../services/dataService';
 
 const CartContext = createContext(undefined);
-const CART_STORAGE_KEY = 'manemade_cart_v2';
 
 const formatDeliveryTime = (minutes) => `${minutes || 25} mins`;
 
@@ -27,8 +26,8 @@ const normalizeServerCart = (payload) =>
     name: item.itemName,
     price: item.unitPrice,
     image: item.image,
-    rating: item.rating ?? 4.5,
-    deliveryTime: formatDeliveryTime(item.deliveryTimeMinutes),
+    rating: 4.5, // Default UI fallback
+    deliveryTime: formatDeliveryTime(25),
     category: item.categoryName,
     quantity: item.quantity,
   }));
@@ -40,32 +39,23 @@ export function CartProvider({ children }) {
   const [loadingCart, setLoadingCart] = useState(true);
 
   useEffect(() => {
-    const loadGuestCart = () => {
-      const saved = localStorage.getItem(CART_STORAGE_KEY);
-      setCartItems(saved ? JSON.parse(saved) : []);
-      setLoadingCart(false);
-    };
-
     const syncBackendCart = async () => {
-      if (!user?.id) {
-        loadGuestCart();
+      if (!isAuthenticated || !user?.id) {
+        setCartItems([]);
+        setLoadingCart(false);
         return;
       }
 
       setLoadingCart(true);
       try {
-        const guestCart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
-        if (guestCart.length > 0) {
-          for (const item of guestCart) {
-            await cartService.addItem(user.id, { itemId: item.id, quantity: item.quantity });
-          }
-          localStorage.removeItem(CART_STORAGE_KEY);
-        }
-
         const response = await cartService.getCart(user.id);
         setCartItems(normalizeServerCart(response.data));
       } catch (error) {
-        showToast({ title: 'Cart sync failed', description: error.response?.data?.message || 'Could not load your cart from the backend.' });
+        showToast({ 
+          title: 'Cart sync failed', 
+          description: error.response?.data?.message || 'Could not load your cart from the backend.',
+          variant: 'error'
+        });
         setCartItems([]);
       } finally {
         setLoadingCart(false);
@@ -75,13 +65,17 @@ export function CartProvider({ children }) {
     syncBackendCart();
   }, [isAuthenticated, showToast, user?.id]);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
-    }
-  }, [cartItems, isAuthenticated]);
 
   const addToCart = async (item, quantity = 1) => {
+    if (!isAuthenticated || !user?.id) {
+      showToast({ 
+        title: 'Login Required', 
+        description: 'Please login to add items to your cart.',
+        variant: 'warning'
+      });
+      return;
+    }
+
     // Optimistic update for UI feel
     setCartItems((current) => {
       const existing = current.find((cartItem) => cartItem.id === item.id);
@@ -93,17 +87,19 @@ export function CartProvider({ children }) {
       return [...current, normalizeGuestItem(item, quantity)];
     });
 
-    if (isAuthenticated && user?.id) {
-      try {
-        const response = await cartService.addItem(user.id, { itemId: item.id, quantity });
-        setCartItems(normalizeServerCart(response.data));
-      } catch (error) {
-        showToast({ 
-          title: 'Sync failed', 
-          description: 'Item added locally but could not sync with server.', 
-          variant: 'warning' 
-        });
-      }
+    try {
+      const response = await cartService.addItem({ userId: user.id, itemId: item.id, quantity });
+      setCartItems(normalizeServerCart(response.data));
+      showToast({ title: 'Added to cart', description: `${item.name} added successfully.` });
+    } catch (error) {
+      showToast({ 
+        title: 'Sync failed', 
+        description: 'Could not sync item with server.', 
+        variant: 'error' 
+      });
+      // Revert optimistic update by refetching
+      const response = await cartService.getCart(user.id);
+      setCartItems(normalizeServerCart(response.data));
     }
   };
 

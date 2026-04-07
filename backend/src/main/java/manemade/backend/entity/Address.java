@@ -6,7 +6,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "addresses")
+@Table(name = "addresses", indexes = {
+    @Index(name = "idx_address_user", columnList = "user_id")
+})
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,12 +16,17 @@ public class Address {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private User user;
 
+    @Column(nullable = false)
     private String line1;
     private String line2;
+    @Column(nullable = false)
     private String city;
+    @Column(nullable = false)
     private String state;
+    @Column(nullable = false)
     private String pincode;
 
     @Column(name = "recipient_name")
@@ -31,11 +38,11 @@ public class Address {
     @Column(name = "address_type")
     private String addressType; // Home, Work, Other
 
-    @Column(name = "is_default")
-    private boolean isDefault = false;
+    @Column(name = "is_default", nullable = false)
+    private Boolean isDefault = false;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted = false;
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
 
     @CreationTimestamp
     @Column(name = "created_ts", updatable = false)
@@ -46,6 +53,30 @@ public class Address {
     private LocalDateTime updatedTs;
 
     public Address() {
+    }
+
+    public static AddressBuilder builder() {
+        return new AddressBuilder();
+    }
+
+    public static class AddressBuilder {
+        private Address instance = new Address();
+
+        public AddressBuilder user(User user) { instance.setUser(user); return this; }
+        public AddressBuilder line1(String line1) { instance.setLine1(line1); return this; }
+        public AddressBuilder line2(String line2) { instance.setLine2(line2); return this; }
+        public AddressBuilder city(String city) { instance.setCity(city); return this; }
+        public AddressBuilder state(String state) { instance.setState(state); return this; }
+        public AddressBuilder pincode(String pincode) { instance.setPincode(pincode); return this; }
+        public AddressBuilder recipientName(String recipientName) { instance.setRecipientName(recipientName); return this; }
+        public AddressBuilder recipientPhone(String recipientPhone) { instance.setRecipientPhone(recipientPhone); return this; }
+        public AddressBuilder addressType(String addressType) { instance.setAddressType(addressType); return this; }
+        public AddressBuilder isDefault(Boolean isDefault) { instance.setIsDefault(isDefault); return this; }
+        public AddressBuilder isDeleted(Boolean isDeleted) { instance.setIsDeleted(isDeleted); return this; }
+
+        public Address build() {
+            return instance;
+        }
     }
 
     public Long getId() {
@@ -128,19 +159,19 @@ public class Address {
         this.addressType = addressType;
     }
 
-    public boolean isDefault() {
+    public Boolean getIsDefault() {
         return isDefault;
     }
 
-    public void setDefault(boolean aDefault) {
-        isDefault = aDefault;
+    public void setIsDefault(Boolean isDefault) {
+        this.isDefault = isDefault;
     }
 
-    public boolean isDeleted() {
+    public Boolean getIsDeleted() {
         return isDeleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

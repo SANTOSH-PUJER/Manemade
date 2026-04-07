@@ -7,7 +7,6 @@ import manemade.backend.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -21,16 +20,19 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final PaymentRepository paymentRepository;
     private final CartService cartService;
+    private final PaymentService paymentService;
 
     public OrderService(OrderRepository orderRepository, UserRepository userRepository,
-                        AddressRepository addressRepository, ItemRepository itemRepository,
-                        PaymentRepository paymentRepository, CartService cartService) {
+                        AddressRepository addressRepository, PaymentRepository paymentRepository,
+                        ItemRepository itemRepository, CartService cartService,
+                        PaymentService paymentService) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
-        this.itemRepository = itemRepository;
         this.paymentRepository = paymentRepository;
+        this.itemRepository = itemRepository;
         this.cartService = cartService;
+        this.paymentService = paymentService;
     }
 
     @Transactional
@@ -41,7 +43,7 @@ public class OrderService {
         Address address = addressRepository.findById(request.getAddressId())
                 .orElseThrow(() -> new RuntimeException("Address not found"));
 
-        if (address.isDeleted() || address.getUser() == null || !address.getUser().getId().equals(user.getId())) {
+        if (address.getIsDeleted() || address.getUser() == null || !address.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Address does not belong to the selected user");
         }
 
@@ -57,8 +59,8 @@ public class OrderService {
             Item item = itemRepository.findById(itemReq.getItemId())
                     .orElseThrow(() -> new RuntimeException("Item not found: " + itemReq.getItemId()));
 
-            if (!item.isAvailable()) {
-                throw new RuntimeException(item.getName() + " is currently unavailable");
+            if (!item.getIsAvailable()) {
+                throw new RuntimeException(item.getItemName() + " is currently unavailable");
             }
 
             OrderItem orderItem = new OrderItem();
@@ -74,7 +76,16 @@ public class OrderService {
         order.setTotalAmount(totalAmount);
         order.setTransactionId(buildTransactionId(paymentMode));
         Order savedOrder = orderRepository.save(order);
-        Payment payment = createPaymentRecord(user, savedOrder, paymentMode);
+        
+        manemade.backend.dto.PaymentRequest paymentRequest = new manemade.backend.dto.PaymentRequest();
+        paymentRequest.setUserId(user.getId());
+        paymentRequest.setOrderId(savedOrder.getId());
+        paymentRequest.setAmount(savedOrder.getTotalAmount());
+        paymentRequest.setMethod(paymentMode);
+        paymentRequest.setTransactionId(savedOrder.getTransactionId());
+        
+        manemade.backend.dto.PaymentResponse paymentResponse = paymentService.processPayment(paymentRequest);
+        
         cartService.markCheckedOutIfMatches(
                 user.getId(),
                 request.getItems().stream().map(item -> {
@@ -85,7 +96,7 @@ public class OrderService {
                 }).collect(Collectors.toList())
         );
 
-        return mapToResponse(savedOrder, payment);
+        return mapToResponse(savedOrder, paymentResponse);
     }
 
     @Transactional(readOnly = true)
@@ -106,20 +117,17 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    private Payment createPaymentRecord(User user, Order order, String paymentMode) {
-        Payment payment = new Payment();
-        payment.setUser(user);
-        payment.setOrder(order);
-        payment.setMethod(paymentMode);
-        payment.setAmount(order.getTotalAmount());
-        payment.setTransactionId(order.getTransactionId());
-        payment.setStatus("cod".equals(paymentMode) ? "PENDING" : "SUCCESS");
-        payment.setPaidAt("cod".equals(paymentMode) ? null : LocalDateTime.now());
-        return paymentRepository.save(payment);
-    }
-
-    private OrderResponse mapToResponse(Order order, Payment payment) {
-        Payment resolvedPayment = payment != null ? payment : paymentRepository.findByOrderId(order.getId()).orElse(null);
+    public OrderResponse mapToResponse(Order order, Object paymentObj) {
+        manemade.backend.dto.PaymentResponse payment = null;
+        if (paymentObj instanceof manemade.backend.dto.PaymentResponse) {
+            payment = (manemade.backend.dto.PaymentResponse) paymentObj;
+        } else if (paymentObj instanceof Payment) {
+            payment = paymentService.mapToResponse((Payment) paymentObj);
+        } else {
+             payment = paymentRepository.findByOrderId(order.getId())
+                .map(paymentService::mapToResponse)
+                .orElse(null);
+        }
         return OrderResponse.builder()
                 .id(order.getId())
                 .userId(order.getUser().getId())
@@ -127,18 +135,18 @@ public class OrderService {
                 .totalAmount(order.getTotalAmount())
                 .status(order.getStatus())
                 .paymentMode(order.getPaymentMode())
-                .paymentStatus(resolvedPayment != null ? resolvedPayment.getStatus() : null)
-                .paymentId(resolvedPayment != null ? resolvedPayment.getId() : null)
+                .paymentStatus(payment != null ? payment.getStatus() : null)
+                .paymentId(payment != null ? payment.getId() : null)
                 .transactionId(order.getTransactionId())
                 .createdTs(order.getCreatedTs())
                 .items(order.getItems().stream().map(this::mapToOrderItemResponse).collect(Collectors.toList()))
                 .build();
     }
 
-    private OrderResponse.OrderItemResponse mapToOrderItemResponse(OrderItem item) {
+    public OrderResponse.OrderItemResponse mapToOrderItemResponse(OrderItem item) {
         return OrderResponse.OrderItemResponse.builder()
                 .itemId(item.getItem().getId())
-                .itemName(item.getItem().getName())
+                .itemName(item.getItem().getItemName())
                 .quantity(item.getQuantity())
                 .price(item.getPrice())
                 .build();

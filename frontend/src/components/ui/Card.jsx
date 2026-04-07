@@ -13,7 +13,7 @@ export default function Card({
     <Component
       whileHover={isHoverable ? { y: -6, transition: { duration: 0.3, ease: 'easeOut' } } : {}}
       className={`
-        overflow-hidden rounded-[var(--radius-lg)] border border-black/8 bg-[var(--surface)] text-[var(--text-primary)] shadow-[var(--shadow-soft)] transition-all duration-300 dark:border-white/8
+        overflow-hidden rounded-[var(--radius-lg)] border border-black/8 bg-gray-100 text-gray-900 shadow-[var(--shadow-soft)] transition-all duration-300 dark:border-white/8 dark:bg-gray-800 dark:text-white
         ${isHoverable ? 'hover:shadow-[var(--shadow-strong)]' : ''}
         ${isInteractive ? 'cursor-pointer focus:outline-none focus:ring-4 focus:ring-[var(--accent-strong)]/10' : ''}
         ${className}

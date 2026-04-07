@@ -14,6 +14,15 @@ import Orders from './pages/Orders';
 import OrderSuccess from './pages/OrderSuccess';
 import Profile from './pages/Profile';
 import Shop from './pages/Shop';
+import CategoryManagement from './pages/CategoryManagement';
+import ItemManagement from './pages/ItemManagement';
+import OrderManagement from './pages/OrderManagement';
+import UserManagement from './pages/UserManagement';
+import AdminSettings from './pages/AdminSettings';
+import PaymentManagement from './pages/PaymentManagement';
+
+import useAnalytics from './hooks/useAnalytics';
+import { useEffect } from 'react';
 
 const pageTransition = {
   initial: { opacity: 0, y: 20 },
@@ -28,6 +37,11 @@ function wrap(element) {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const { trackEvent } = useAnalytics();
+
+  useEffect(() => {
+    trackEvent('PAGE_VIEW', { path: location.pathname });
+  }, [location.pathname, trackEvent]);
 
   return (
     <AnimatePresence mode="wait">
@@ -44,7 +58,13 @@ function AnimatedRoutes() {
         <Route path="/profile" element={wrap(<ProtectedRoute><Profile /></ProtectedRoute>)} />
         <Route path="/forgot-password" element={wrap(<ForgotPassword />)} />
         <Route path="/reset-password" element={wrap(<ResetPassword />)} />
-        <Route path="/admin" element={wrap(<ProtectedRoute><AdminDashboard /></ProtectedRoute>)} />
+        <Route path="/admin" element={wrap(<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>)} />
+        <Route path="/admin/categories" element={wrap(<ProtectedRoute adminOnly><CategoryManagement /></ProtectedRoute>)} />
+        <Route path="/admin/items" element={wrap(<ProtectedRoute adminOnly><ItemManagement /></ProtectedRoute>)} />
+        <Route path="/admin/orders" element={wrap(<ProtectedRoute adminOnly><OrderManagement /></ProtectedRoute>)} />
+        <Route path="/admin/users" element={wrap(<ProtectedRoute adminOnly><UserManagement /></ProtectedRoute>)} />
+        <Route path="/admin/settings" element={wrap(<ProtectedRoute adminOnly><AdminSettings /></ProtectedRoute>)} />
+        <Route path="/admin/payments" element={wrap(<ProtectedRoute adminOnly><PaymentManagement /></ProtectedRoute>)} />
         <Route path="*" element={wrap(<NotFound />)} />
       </Routes>
     </AnimatePresence>

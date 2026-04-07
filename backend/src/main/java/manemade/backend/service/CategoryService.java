@@ -19,7 +19,7 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<CategoryResponse> getAllCategories() {
-        return categoryRepository.findCategoriesWithAvailableItems().stream()
+        return categoryRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -27,6 +27,24 @@ public class CategoryService {
     public CategoryResponse createCategory(Category category) {
         Category saved = categoryRepository.save(category);
         return mapToResponse(saved);
+    }
+
+    @Transactional
+    public CategoryResponse updateCategory(Long id, Category categoryDetails) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+        category.setName(categoryDetails.getName());
+        category.setSlug(categoryDetails.getSlug());
+        category.setDescription(categoryDetails.getDescription());
+        category.setImageUrl(categoryDetails.getImageUrl());
+        return mapToResponse(categoryRepository.save(category));
+    }
+
+    @Transactional
+    public void deleteCategory(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+        categoryRepository.delete(category);
     }
 
     private CategoryResponse mapToResponse(Category category) {

@@ -1,12 +1,22 @@
+import Skeleton from './Skeleton';
+
 function SkeletonCard() {
   return (
-    <div className="overflow-hidden rounded-[28px] border border-white/10 bg-white/60 p-4 shadow-[var(--shadow-soft)] dark:bg-white/5">
-      <div className="skeleton h-48 rounded-[24px]" />
-      <div className="mt-4 space-y-3">
-        <div className="skeleton h-4 w-1/3 rounded-full" />
-        <div className="skeleton h-6 w-3/4 rounded-full" />
-        <div className="skeleton h-4 w-full rounded-full" />
-        <div className="skeleton h-11 w-full rounded-full" />
+    <div className="flex flex-col space-y-4 rounded-[var(--radius-xl)] border border-black/5 bg-[var(--surface)] p-6 dark:border-white/5">
+      <Skeleton height="h-48" className="rounded-2xl" />
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Skeleton width="w-2/3" height="h-6" />
+          <Skeleton width="w-10" height="h-5" className="rounded-full" />
+        </div>
+        <Skeleton width="w-full" height="h-4" />
+        <div className="flex items-center justify-between pt-4">
+          <div className="space-y-1 flex-1">
+             <Skeleton width="w-12" height="h-3" />
+             <Skeleton width="w-20" height="h-7" />
+          </div>
+          <Skeleton width="w-12" height="h-12" variant="circular" />
+        </div>
       </div>
     </div>
   );

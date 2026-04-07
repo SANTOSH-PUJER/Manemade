@@ -6,15 +6,18 @@ const formatDeliveryTime = (minutes) => `${minutes || 25} mins`;
 
 const normalizeItem = (item) => ({
   ...item,
+  name: item.itemName,
+  slug: item.itemSlug,
+  description: item.shortDescription,
+  image: item.itemImage,
   category: item.categoryName,
-  image: item.image,
-  rating: item.rating ?? 4.5,
-  reviews: item.reviewCount ?? 0,
-  type: item.isVeg === false ? 'non-veg' : 'veg',
-  deliveryTime: formatDeliveryTime(item.deliveryTimeMinutes),
-  ingredients: item.ingredients || [],
-  tags: item.tags || [],
-  highlight: item.highlight || item.description,
+  rating: 4.5, // Default UI fallback
+  reviews: 42,
+  type: 'veg',
+  deliveryTime: formatDeliveryTime(25),
+  ingredients: [],
+  tags: [],
+  highlight: item.shortDescription,
 });
 
 const normalizeCategory = (category) => ({
@@ -23,7 +26,7 @@ const normalizeCategory = (category) => ({
   image: category.image,
 });
 
-export default function useMenuData() {
+export default function useMenuData(categorySlug, searchQuery = '') {
   const { showToast } = useToast();
   const [menuItems, setMenuItems] = useState([]);
   const [menuCategories, setMenuCategories] = useState([]);
@@ -37,10 +40,23 @@ export default function useMenuData() {
       setLoading(true);
       setError('');
       try {
-        const [itemsResponse, categoriesResponse] = await Promise.all([itemService.getAll(), categoryService.getAll()]);
+        const fetchItems = searchQuery.trim() 
+            ? itemService.search(searchQuery)
+            : itemService.getAll(categorySlug);
+
+        const [itemsResponse, categoriesResponse] = await Promise.all([
+            fetchItems, 
+            categoryService.getAll()
+        ]);
         if (cancelled) return;
 
-        setMenuItems((itemsResponse.data || []).map(normalizeItem));
+        let items = (itemsResponse.data || []).map(normalizeItem);
+        // If we have a category slug AND a search query, filter the search results locally by category
+        if (searchQuery && categorySlug && categorySlug !== 'All') {
+            items = items.filter(it => it.categorySlug === categorySlug);
+        }
+
+        setMenuItems(items);
         setMenuCategories((categoriesResponse.data || []).map(normalizeCategory));
       } catch (requestError) {
         if (!cancelled) {
@@ -59,7 +75,7 @@ export default function useMenuData() {
     return () => {
       cancelled = true;
     };
-  }, [showToast]);
+  }, [showToast, categorySlug, searchQuery]);
 
   const categoryNames = useMemo(
     () => [...new Set(menuItems.map((dish) => dish.category).filter(Boolean))],

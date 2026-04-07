@@ -1,9 +1,9 @@
 const variants = {
   primary: 'bg-[var(--accent-strong)] text-white shadow-lg shadow-[var(--accent-strong)]/20',
-  secondary: 'bg-[var(--surface-muted)] text-[var(--text-secondary)]',
+  secondary: 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
   success: 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400',
   warning: 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400',
-  outline: 'border border-[var(--text-muted)]/20 text-[var(--text-secondary)]',
+  outline: 'border border-gray-200 text-gray-800 dark:border-white/10 dark:text-gray-200',
 };
 
 export default function Badge({

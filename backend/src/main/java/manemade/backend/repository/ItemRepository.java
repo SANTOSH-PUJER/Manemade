@@ -12,20 +12,22 @@ import java.util.Optional;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
     @EntityGraph(attributePaths = {"category"})
-    Optional<Item> findBySlugAndIsAvailableTrue(String slug);
+    Optional<Item> findByItemSlugAndIsAvailableTrue(String slug);
+
+    Optional<Item> findByItemSlug(String itemSlug);
 
     @EntityGraph(attributePaths = {"category"})
-    List<Item> findByCategory_SlugAndIsAvailableTrue(String categorySlug);
+    List<Item> findByCategory_SlugAndIsAvailableTrueAndIsDeletedFalse(String categorySlug);
 
     @EntityGraph(attributePaths = {"category"})
-    List<Item> findByCategory_IdAndIsAvailableTrue(Long categoryId);
+    List<Item> findByCategory_IdAndIsAvailableTrueAndIsDeletedFalse(Long categoryId);
 
     @EntityGraph(attributePaths = {"category"})
-    @Query("SELECT i FROM Item i WHERE i.isAvailable = true AND (LOWER(i.name) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :query, '%')))")
+    @Query("SELECT i FROM Item i WHERE i.isAvailable = true AND i.isDeleted = false AND (LOWER(i.itemName) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(i.shortDescription) LIKE LOWER(CONCAT('%', :query, '%')))")
     List<Item> searchItems(@Param("query") String query);
 
     @EntityGraph(attributePaths = {"category"})
-    List<Item> findByIsAvailableTrue();
+    List<Item> findByIsAvailableTrueAndIsDeletedFalse();
 
     @Override
     @EntityGraph(attributePaths = {"category"})

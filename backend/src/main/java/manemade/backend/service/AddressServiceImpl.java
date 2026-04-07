@@ -33,7 +33,7 @@ public class AddressServiceImpl implements AddressService {
         if (request.getId() != null) {
             address = addressRepository.findById(request.getId())
                     .orElseThrow(() -> new RuntimeException("Address not found"));
-            if (address.getUser() == null || !address.getUser().getId().equals(userId)) {
+        if (address.getIsDeleted() || address.getUser() == null || !address.getUser().getId().equals(userId)) {
                 throw new RuntimeException("Address does not belong to the selected user");
             }
         } else {
@@ -53,7 +53,7 @@ public class AddressServiceImpl implements AddressService {
         boolean shouldBeDefault = request.isDefault() || addressRepository.findByUserIdAndIsDeletedFalse(userId).isEmpty();
         if (shouldBeDefault) {
             resetDefaultAddresses(userId);
-            address.setDefault(true);
+            address.setIsDefault(true);
         }
 
         Address savedAddress = addressRepository.save(address);
@@ -80,8 +80,8 @@ public class AddressServiceImpl implements AddressService {
     public void deleteAddress(Long addressId) {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new RuntimeException("Address not found"));
-        address.setDeleted(true);
-        address.setDefault(false);
+        address.setIsDeleted(true);
+        address.setIsDefault(false);
         addressRepository.save(address);
     }
 
@@ -94,7 +94,7 @@ public class AddressServiceImpl implements AddressService {
         if (address.getUser() == null || !address.getUser().getId().equals(userId)) {
             throw new RuntimeException("Address does not belong to the selected user");
         }
-        address.setDefault(true);
+        address.setIsDefault(true);
         return mapToResponse(addressRepository.save(address));
     }
 
@@ -110,7 +110,7 @@ public class AddressServiceImpl implements AddressService {
         response.setCity(address.getCity());
         response.setState(address.getState());
         response.setPincode(address.getPincode());
-        response.setDefault(address.isDefault());
+        response.setDefault(address.getIsDefault());
         response.setRecipientName(address.getRecipientName());
         response.setRecipientPhone(address.getRecipientPhone());
         response.setAddressType(address.getAddressType());

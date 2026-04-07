@@ -13,6 +13,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUserOrderByCreatedTsDesc(User user);
 
     @Override
-    @EntityGraph(attributePaths = {"user", "address", "items", "items.item"})
+    @org.springframework.data.jpa.repository.Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.user LEFT JOIN FETCH o.address LEFT JOIN FETCH o.items oi LEFT JOIN FETCH oi.item ORDER BY o.createdTs DESC")
     List<Order> findAll();
 }

@@ -26,4 +26,9 @@ public class PaymentController {
     public ResponseEntity<PaymentResponse> getPaymentByOrder(@PathVariable Long orderId) {
         return ResponseEntity.ok(paymentService.getPaymentByOrder(orderId));
     }
+
+    @PostMapping
+    public ResponseEntity<PaymentResponse> processPayment(@RequestBody manemade.backend.dto.PaymentRequest request) {
+        return ResponseEntity.ok(paymentService.processPayment(request));
+    }
 }

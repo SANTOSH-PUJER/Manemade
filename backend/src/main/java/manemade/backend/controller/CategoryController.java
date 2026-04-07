@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/categories")
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})
 public class CategoryController {
     private final CategoryService categoryService;
@@ -19,6 +19,11 @@ public class CategoryController {
     }
 
     @GetMapping("/all")
+    public ResponseEntity<List<CategoryResponse>> getAllOld() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+
+    @GetMapping
     public ResponseEntity<List<CategoryResponse>> getAll() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
@@ -26,5 +31,16 @@ public class CategoryController {
     @PostMapping("/create")
     public ResponseEntity<CategoryResponse> create(@RequestBody Category category) {
         return ResponseEntity.ok(categoryService.createCategory(category));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryResponse> update(@PathVariable Long id, @RequestBody Category category) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, category));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok().build();
     }
 }

@@ -7,6 +7,8 @@ public class CartItemRequest {
     @NotNull(message = "Item id is required")
     private Long itemId;
 
+    private Long userId;
+
     @Min(value = 1, message = "Quantity must be at least 1")
     private int quantity;
 
@@ -16,6 +18,14 @@ public class CartItemRequest {
 
     public void setItemId(Long itemId) {
         this.itemId = itemId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public int getQuantity() {

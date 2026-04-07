@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Check, Clock, Info, Leaf, Plus, Minus, Share2, Star, Truck } from 'lucide-react';
+import { Check, Clock, Info, Leaf, Plus, Minus, Share2, Star, Truck, Package } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import Badge from '../components/ui/Badge';
@@ -96,7 +96,7 @@ function FoodDetails() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-6 lg:px-12 pt-24 pb-32 overflow-hidden">
+    <div className="mx-auto max-w-7xl px-6 lg:px-12 pt-24 pb-32 overflow-hidden bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-500">
       {/* Top Navigation / Breadcrumbs could go here */}
 
       <div className="grid gap-12 lg:grid-cols-2">
@@ -106,7 +106,7 @@ function FoodDetails() {
           animate={{ opacity: 1, x: 0 }}
           className="relative group"
         >
-          <div className="sticky top-28 overflow-hidden rounded-[var(--radius-xl)] border-[10px] border-white bg-white shadow-[var(--shadow-strong)] dark:border-white/5">
+          <div className="sticky top-28 overflow-hidden rounded-[var(--radius-xl)] border-[10px] border-gray-100 bg-gray-100 shadow-[var(--shadow-strong)] dark:border-white/5 dark:bg-gray-800">
             <img src={dish.image} alt={dish.name} className="h-[600px] w-full object-cover transition-transform duration-700 hover:scale-105" />
             
             {/* Badges on Image */}
@@ -166,6 +166,14 @@ function FoodDetails() {
             </div>
 
             <div className="space-y-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Pack Size</p>
+              <div className="flex items-center gap-2 text-sm font-black text-[var(--text-primary)]">
+                <Package size={18} className="text-blue-500" strokeWidth={3} />
+                {dish.quantity || 'Standard'}
+              </div>
+            </div>
+
+            <div className="space-y-1">
               <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Category</p>
               <div className="flex items-center gap-2 text-sm font-black text-[var(--text-primary)]">
                 <Check size={18} className="text-emerald-500" strokeWidth={3} />
@@ -199,7 +207,7 @@ function FoodDetails() {
           </div>
 
           {/* Action Footer */}
-          <div className="sticky bottom-8 z-20 mt-auto flex flex-col gap-6 rounded-[var(--radius-xl)] bg-[var(--surface)]/80 p-6 shadow-[var(--shadow-strong)] backdrop-blur-2xl border border-black/5 dark:border-white/5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="sticky bottom-8 z-20 mt-auto flex flex-col gap-6 rounded-[var(--radius-xl)] bg-gray-50/80 p-6 shadow-[var(--shadow-strong)] backdrop-blur-2xl border border-black/5 dark:border-white/5 dark:bg-gray-800/80 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
               <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Total Price</p>
               <p className="text-4xl font-black text-[var(--accent-strong)]">₹{dish.price * quantity}</p>

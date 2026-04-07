@@ -12,6 +12,7 @@ import java.util.List;
 @Table(
         name = "cart",
         indexes = {
+                @Index(name = "idx_cart_user", columnList = "user_id"),
                 @Index(name = "idx_cart_user_status", columnList = "user_id,status")
         }
 )
@@ -22,6 +23,7 @@ public class Cart {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private User user;
 
     @Column(nullable = false)

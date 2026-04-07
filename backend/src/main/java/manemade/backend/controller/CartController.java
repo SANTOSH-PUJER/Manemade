@@ -22,9 +22,9 @@ public class CartController {
         return ResponseEntity.ok(cartService.getActiveCart(userId));
     }
 
-    @PostMapping("/{userId}/items")
-    public ResponseEntity<CartResponse> addItem(@PathVariable Long userId, @Valid @RequestBody CartItemRequest request) {
-        return ResponseEntity.ok(cartService.addItem(userId, request));
+    @PostMapping("/add")
+    public ResponseEntity<CartResponse> addItem(@Valid @RequestBody CartItemRequest request) {
+        return ResponseEntity.ok(cartService.addItem(request.getUserId(), request));
     }
 
     @PutMapping("/{userId}/items/{itemId}")

@@ -127,8 +127,8 @@ public class CartService {
     private Item getAvailableItem(Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Item not found: " + itemId));
-        if (!item.isAvailable()) {
-            throw new RuntimeException(item.getName() + " is currently unavailable");
+        if (!item.getIsAvailable()) {
+            throw new RuntimeException(item.getItemName() + " is currently unavailable");
         }
         return item;
     }
@@ -153,18 +153,17 @@ public class CartService {
         for (CartItem item : cart.getItems()) {
             CartResponse.CartLineItem lineItem = new CartResponse.CartLineItem();
             lineItem.setItemId(item.getItem().getId());
-            lineItem.setItemName(item.getItem().getName());
-            lineItem.setItemSlug(item.getItem().getSlug());
-            lineItem.setImage(item.getItem().getImageUrl());
+            lineItem.setItemName(item.getItem().getItemName());
+            lineItem.setItemSlug(item.getItem().getItemSlug());
+            lineItem.setImage(item.getItem().getItemImage());
             lineItem.setCategoryName(item.getItem().getCategory() != null ? item.getItem().getCategory().getName() : null);
-            lineItem.setRating(item.getItem().getRating());
-            lineItem.setDeliveryTimeMinutes(item.getItem().getDeliveryTimeMinutes());
             lineItem.setUnitPrice(item.getUnitPrice());
             lineItem.setQuantity(item.getQuantity());
             lineItem.setLineTotal(item.getUnitPrice() * item.getQuantity());
             items.add(lineItem);
         }
         response.setItems(items);
+
         return response;
     }
 }

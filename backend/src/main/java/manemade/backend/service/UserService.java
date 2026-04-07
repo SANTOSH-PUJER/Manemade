@@ -20,4 +20,8 @@ public interface UserService {
     void resetPassword(ResetPasswordRequest request);
     
     void recordAnalytics(Long userId, String platform, String device, String location);
+    
+    UserResponse getMe(String email);
+    
+    UserResponse mapToResponse(manemade.backend.entity.User user);
 }

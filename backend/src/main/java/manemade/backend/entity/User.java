@@ -36,11 +36,15 @@ public class User implements UserDetails {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Address> addresses;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted = false;
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
+    @Column(nullable = false)
+    private String role = "USER";
 
     @CreationTimestamp
     @Column(name = "created_ts", updatable = false)
@@ -105,12 +109,20 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public boolean isDeleted() {
+    public Boolean getIsDeleted() {
         return isDeleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getAvatarUrl() {
@@ -162,6 +174,11 @@ public class User implements UserDetails {
             return this;
         }
 
+        public UserBuilder role(String role) {
+            instance.setRole(role);
+            return this;
+        }
+
         public User build() {
             return instance;
         }
@@ -169,7 +186,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override
@@ -194,6 +211,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return !isDeleted;
+        return !getIsDeleted();
     }
 }
