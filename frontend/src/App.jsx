@@ -20,6 +20,13 @@ import OrderManagement from './pages/OrderManagement';
 import UserManagement from './pages/UserManagement';
 import AdminSettings from './pages/AdminSettings';
 import PaymentManagement from './pages/PaymentManagement';
+import OtpDemo from './pages/OtpDemo';
+import About from './pages/About';
+import Team from './pages/Team';
+import Careers from './pages/Careers';
+import Contact from './pages/Contact';
+import Support from './pages/Support';
+import Faq from './pages/Faq';
 
 import useAnalytics from './hooks/useAnalytics';
 import { useEffect } from 'react';
@@ -70,6 +77,13 @@ function AnimatedRoutes() {
         <Route path="/admin/users" element={wrap(<ProtectedRoute adminOnly><UserManagement /></ProtectedRoute>)} />
         <Route path="/admin/settings" element={wrap(<ProtectedRoute adminOnly><AdminSettings /></ProtectedRoute>)} />
         <Route path="/admin/payments" element={wrap(<ProtectedRoute adminOnly><PaymentManagement /></ProtectedRoute>)} />
+        <Route path="/otp-demo" element={wrap(<OtpDemo />)} />
+        <Route path="/about" element={wrap(<About />)} />
+        <Route path="/team" element={wrap(<Team />)} />
+        <Route path="/careers" element={wrap(<Careers />)} />
+        <Route path="/contact" element={wrap(<Contact />)} />
+        <Route path="/support" element={wrap(<Support />)} />
+        <Route path="/faq" element={wrap(<Faq />)} />
         <Route path="*" element={wrap(<NotFound />)} />
       </Routes>
     </AnimatePresence>

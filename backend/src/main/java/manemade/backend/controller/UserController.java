@@ -86,20 +86,45 @@ public class UserController {
     }
 
     @PostMapping("/generate-otp")
-    public ResponseEntity<Void> generateOtp(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        log.info("OTP generation requested for email: {}", email);
-        userService.generateOtp(email);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Map<String, String>> generateOtp(@RequestBody Map<String, String> request) {
+        String identifier = request.get("email"); // identifier can be email or mobile
+        log.info("OTP generation requested for identifier: {}", identifier);
+        Map<String, String> otpData = userService.generateOtp(identifier);
+        return ResponseEntity.ok(otpData);
     }
 
     @PostMapping("/verify-otp")
     public ResponseEntity<Boolean> verifyOtp(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
+        String identifier = request.get("email");
         String otp = request.get("otp");
-        log.info("OTP verification requested for email: {}", email);
-        boolean isValid = userService.verifyOtp(email, otp);
+        log.info("OTP verification requested for identifier: {}", identifier);
+        boolean isValid = userService.verifyOtp(identifier, otp);
         return ResponseEntity.ok(isValid);
+    }
+
+    @PostMapping("/login-otp")
+    public ResponseEntity<AuthResponse> loginOtp(@RequestBody Map<String, String> request,
+                                               HttpServletRequest httpRequest,
+                                               HttpServletResponse httpResponse) {
+        String identifier = request.get("email");
+        String otp = request.get("otp");
+        log.info("Login with OTP requested for identifier: {}", identifier);
+        
+        AuthResponse response = userService.loginWithOtp(identifier, otp);
+        
+        // Establish Session & Security Context
+        UserDetails userDetails = userDetailsService.loadUserByUsername(response.getUser().getEmail());
+        var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        var context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+        securityContextRepository.saveContext(context, httpRequest, httpResponse);
+        
+        HttpSession session = httpRequest.getSession(true);
+        session.setAttribute("userId", response.getUser().getId());
+        
+        log.info("User logged in via OTP successfully: {}", response.getUser().getId());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/reset-password")

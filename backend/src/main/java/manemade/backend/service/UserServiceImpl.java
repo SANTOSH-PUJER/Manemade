@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.time.LocalDateTime;
 
 @Service
@@ -167,26 +168,55 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void generateOtp(String email) {
-        log.info("Generating OTP for email: {}", email);
-        if (!userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Email not registered");
-        }
+    public Map<String, String> generateOtp(String identifier) {
+        log.info("Generating OTP for email: {}", identifier);
+        User user = userRepository.findByEmail(identifier)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + identifier));
 
         String otpValue = String.valueOf((int) (Math.random() * 900000) + 100000);
-        Otp otp = new Otp(email, otpValue, LocalDateTime.now().plusMinutes(5));
+        Otp otp = new Otp(user.getEmail(), otpValue, LocalDateTime.now().plusMinutes(5));
 
-        otpRepository.deleteByEmail(email);
+        otpRepository.deleteByEmail(user.getEmail());
         otpRepository.save(otp);
-        log.info("OTP for {}: {}", email, otpValue);
+        log.info("OTP for {}: {}", user.getEmail(), otpValue);
+        
+        return Map.of("otp", otpValue, "email", user.getEmail());
     }
 
     @Override
-    public boolean verifyOtp(String email, String otp) {
-        log.info("Verifying OTP for email: {}", email);
-        return otpRepository.findTopByEmailOrderByCreatedTsDesc(email)
+    public boolean verifyOtp(String identifier, String otp) {
+        log.info("Verifying OTP for email: {}", identifier);
+        return otpRepository.findTopByEmailOrderByCreatedTsDesc(identifier)
                 .map(o -> o.getOtp().equals(otp) && o.getExpiryTs().isAfter(LocalDateTime.now()))
                 .orElse(false);
+    }
+
+    @Override
+    @Transactional
+    public AuthResponse loginWithOtp(String identifier, String otp) {
+        log.info("OTP Login attempt for email: {}", identifier);
+        if (!verifyOtp(identifier, otp)) {
+            throw new RuntimeException("Invalid or expired OTP");
+        }
+
+        User user = userRepository.findByEmail(identifier)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Establish session authentication
+        org.springframework.security.authentication.UsernamePasswordAuthenticationToken authToken = 
+                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                        user.getEmail(), null, user.getAuthorities());
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        String token = jwtService.generateToken(user);
+        AuthResponse response = new AuthResponse();
+        response.setToken(token);
+        response.setUser(mapToResponse(user));
+        
+        // Cleanup OTP
+        otpRepository.deleteByEmail(user.getEmail());
+        
+        return response;
     }
 
     @Override
@@ -197,7 +227,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Invalid or expired OTP");
         }
 
-        User user = userRepository.findByEmailWithAddresses(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
         otpRepository.deleteByEmail(request.getEmail());

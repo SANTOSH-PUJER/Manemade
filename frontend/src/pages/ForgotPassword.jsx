@@ -19,11 +19,16 @@ function ForgotPassword() {
     setLoading(true);
     
     try {
-      // Connect to backend generate-otp
-      await authService.generateOtp(email);
+      // 1. Connect to backend generate-otp and get the code
+      const response = await authService.generateOtp(email);
+      const generatedOtp = response.data.otp;
+      
+      // 2. Send actual email via EmailJS
+      const { sendOtpEmail } = await import('../services/mailService');
+      await sendOtpEmail(email, 'ManeMade User', generatedOtp);
       
       showToast({
-        title: 'OTP Sent Successfuly',
+        title: 'OTP Sent Successfully',
         description: `Please check your email (${email}) for the 6-digit code.`,
         tone: 'success',
       });

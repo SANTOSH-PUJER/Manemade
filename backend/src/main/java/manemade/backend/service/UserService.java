@@ -1,6 +1,7 @@
 package manemade.backend.service;
 
 import manemade.backend.dto.*;
+import java.util.Map;
 
 public interface UserService {
     AuthResponse registerUser(UserRegistrationRequest request);
@@ -13,9 +14,11 @@ public interface UserService {
 
     void changePassword(Long id, ChangePasswordRequest request);
 
-    void generateOtp(String email);
+    Map<String, String> generateOtp(String identifier);
 
-    boolean verifyOtp(String email, String otp);
+    boolean verifyOtp(String identifier, String otp);
+
+    AuthResponse loginWithOtp(String identifier, String otp);
 
     void resetPassword(ResetPasswordRequest request);
     

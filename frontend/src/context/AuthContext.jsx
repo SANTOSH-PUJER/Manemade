@@ -40,6 +40,17 @@ export function AuthProvider({ children }) {
           throw error;
         }
       },
+      loginWithOtp: async (otpData) => {
+        try {
+          const response = await authService.loginWithOtp(otpData);
+          setUser(response.data.user);
+          setIsAuthenticated(true);
+          return response.data;
+        } catch (error) {
+          console.error("OTP Login failed:", error);
+          throw error;
+        }
+      },
       register: async (userData) => {
         try {
           const response = await authService.register(userData);

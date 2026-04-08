@@ -16,6 +16,7 @@ export const authService = {
   login: (credentials) => api.post('/user/login', credentials),
   generateOtp: (email) => api.post('/user/generate-otp', { email }),
   verifyOtp: (otpData) => api.post('/user/verify-otp', otpData),
+  loginWithOtp: (otpData) => api.post('/user/login-otp', otpData),
   resetPassword: (resetData) => api.post('/user/reset-password', resetData),
   getUserProfile: (id) => api.get(`/user/${id}`),
   updateUserProfile: (id, userData) => api.put(`/user/${id}`, userData),
