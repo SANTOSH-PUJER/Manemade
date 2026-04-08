@@ -17,6 +17,9 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import jakarta.servlet.http.HttpServletResponse;
+import manemade.backend.service.FileStorageService;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Map;
 
@@ -29,11 +32,13 @@ public class UserController {
 
     private final UserService userService;
     private final UserDetailsService userDetailsService;
+    private final FileStorageService fileStorageService;
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
     
-    public UserController(UserService userService, UserDetailsService userDetailsService) {
+    public UserController(UserService userService, UserDetailsService userDetailsService, FileStorageService fileStorageService) {
         this.userService = userService;
         this.userDetailsService = userDetailsService;
+        this.fileStorageService = fileStorageService;
     }
 
     @PostMapping("/register")
@@ -114,6 +119,28 @@ public class UserController {
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request) {
         log.info("Updating user profile for id: {}", id);
         return ResponseEntity.ok(userService.updateUser(id, request));
+    }
+
+    @PostMapping("/{id}/avatar")
+    public ResponseEntity<UserResponse> uploadAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        log.info("Uploading avatar for user id: {}", id);
+        String filePath = fileStorageService.saveFile(file);
+        
+        // Construct full URL
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/uploads/")
+                .path(filePath)
+                .toUriString();
+        
+        UpdateUserRequest updateRequest = new UpdateUserRequest();
+        UserResponse currentUser = userService.getUserById(id);
+        updateRequest.setFirstName(currentUser.getFirstName());
+        updateRequest.setLastName(currentUser.getLastName());
+        updateRequest.setEmail(currentUser.getEmail());
+        updateRequest.setMobileNumber(currentUser.getMobileNumber());
+        updateRequest.setAvatarUrl(fileDownloadUri);
+        
+        return ResponseEntity.ok(userService.updateUser(id, updateRequest));
     }
 
     @GetMapping("/me")

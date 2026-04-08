@@ -118,7 +118,6 @@ function Checkout() {
               <div className="group relative flex flex-col gap-6 rounded-[var(--radius-lg)] border border-black/5 bg-[var(--surface)] p-6 shadow-sm transition-all hover:bg-[var(--surface-muted)] dark:border-white/5 sm:flex-row sm:items-center">
                 <img src={item.image} alt={item.name} className="h-28 w-28 rounded-[24px] object-cover shadow-md transition-transform duration-500 group-hover:scale-105" />
                 <div className="flex-1 space-y-2">
-                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--accent-strong)]">{item.deliveryTime}</p>
                    <h3 className="font-display text-2xl font-black">{item.name}</h3>
                    <p className="text-sm font-bold text-[var(--text-muted)]">₹{item.price} per unit</p>
                 </div>

@@ -19,6 +19,15 @@ export const authService = {
   resetPassword: (resetData) => api.post('/user/reset-password', resetData),
   getUserProfile: (id) => api.get(`/user/${id}`),
   updateUserProfile: (id, userData) => api.put(`/user/${id}`, userData),
+  uploadAvatar: (id, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/user/${id}/avatar`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  },
   getMe: () => api.get('/user/me'),
   logout: () => api.post('/user/logout'),
 };

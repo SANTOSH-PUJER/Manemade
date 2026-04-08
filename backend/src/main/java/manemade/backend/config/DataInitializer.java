@@ -52,39 +52,42 @@ public class DataInitializer {
                                 log.info("Unique mobile constraint already exists or could not be added.");
                         }
 
-                        // 1. Ensure Admin User exists with correct Role
-                        userRepository.findByEmail("manemade.admin@gmail.com")
-                                        .or(() -> userRepository.findByMobileNumber("9999999999"))
+                        // 1. Ensure Main Admin User exists (Santosh Pujer)
+                        User adminUser = userRepository.findByEmail("santoshpujer466@gmail.com")
+                                        .or(() -> userRepository.findByMobileNumber("7204006350"))
                                         .orElseGet(() -> {
                                                 User user = User.builder()
-                                                                .firstName("ManeMade")
-                                                                .lastName("Admin")
-                                                                .email("manemade.admin@gmail.com")
-                                                                .mobileNumber("9999999999")
-                                                                .password(passwordEncoder.encode("admin123"))
+                                                                .firstName("Santosh")
+                                                                .lastName("Pujer")
+                                                                .email("santoshpujer466@gmail.com")
+                                                                .mobileNumber("7204006350")
+                                                                .password(passwordEncoder.encode("Admin@123"))
                                                                 .role("ADMIN")
                                                                 .build();
                                                 return userRepository.save(user);
                                         });
 
-                        // 2. Ensure Default User exists
-                        User defaultUser = userRepository.findByEmail("santosh@example.com")
-                                        .or(() -> userRepository.findByMobileNumber("9876543210"))
-                                        .orElseGet(() -> {
-                                                User user = User.builder()
-                                                                .firstName("Santosh")
-                                                                .lastName("Pujer")
-                                                                .email("santosh@example.com")
-                                                                .mobileNumber("9876543210")
-                                                                .password(passwordEncoder.encode("password123"))
-                                                                .role("USER")
-                                                                .build();
-                                                return userRepository.save(user);
-                                        });
+                        // 2. Safely remove old legacy users and their dependent records
+                        try {
+                                String oldEmails = "'manemade.admin@gmail.com', 'santosh@example.com'";
+                                log.info("Purging legacy data for users: {}", oldEmails);
+                                
+                                // Order of deletion to respect constraints: Payments -> Order Items -> Orders -> Addresses -> Analytics -> Users
+                                jdbcTemplate.execute("DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE user_id IN (SELECT id FROM users WHERE email IN (" + oldEmails + ")))");
+                                jdbcTemplate.execute("DELETE FROM payments WHERE order_id IN (SELECT id FROM orders WHERE user_id IN (SELECT id FROM users WHERE email IN (" + oldEmails + ")))");
+                                jdbcTemplate.execute("DELETE FROM orders WHERE user_id IN (SELECT id FROM users WHERE email IN (" + oldEmails + ")))");
+                                jdbcTemplate.execute("DELETE FROM addresses WHERE user_id IN (SELECT id FROM users WHERE email IN (" + oldEmails + ")))");
+                                jdbcTemplate.execute("DELETE FROM user_analytics WHERE user_id IN (SELECT id FROM users WHERE email IN (" + oldEmails + ")))");
+                                jdbcTemplate.execute("DELETE FROM users WHERE email IN (" + oldEmails + ")");
+                                
+                                log.info("Legacy data purge completed.");
+                        } catch (Exception e) {
+                                log.warn("Legacy data purge encountered issues (possibly already deleted): {}", e.getMessage());
+                        }
 
-                        if (addressRepository.findByUserIdAndIsDeletedFalse(defaultUser.getId()).isEmpty()) {
+                        if (addressRepository.findByUserIdAndIsDeletedFalse(adminUser.getId()).isEmpty()) {
                                 Address address = new Address();
-                                address.setUser(defaultUser);
+                                address.setUser(adminUser);
                                 address.setLine1("1st Block, Rajajinagar");
                                 address.setCity("Bengaluru");
                                 address.setState("Karnataka");
@@ -103,10 +106,10 @@ public class DataInitializer {
                         // 5. Ensure Sample Orders and Payments
                         if (orderRepository.count() == 0) {
                                 ensureSampleOrdersAndPayments(orderRepository, paymentRepository,
-                                                defaultUser, savedItems,
+                                                adminUser, savedItems,
                                                 addressRepository
                                                                 .findByUserIdAndIsDeletedFalse(
-                                                                                defaultUser.getId())
+                                                                                adminUser.getId())
                                                                 .get(0));
                         }
                 };
@@ -282,28 +285,28 @@ public class DataInitializer {
                 Category chutney = categories.get("chutney-powders");
                 items.add(item("Shenga Chutney Pudi", "shenga-chutney",
                                 "The famous roasted groundnut chutney powder that lifts every rotti.", 45.0,
-                                "/images/ChutnuyPowders/ShengaChutnuy.jpg", chutney));
+                                "/images/ChutneyPowders/ShengaChutnuy.jpg", chutney));
                 items.add(item("Karibevu Chutney Pudi", "karibevu-chutney",
                                 "Aromatic curry leaf powder, rich in iron and packed with flavor.", 55.0,
-                                "/images/ChutnuyPowders/KaribevuChutnuy.jpg", chutney));
+                                "/images/ChutneyPowders/KaribevuChutney.jpg", chutney));
                 items.add(item("Dry Garlic Chutney Powder", "garlic-chutney",
                                 "A spicy, smoky garlic powder that's the soul of Hubballi street bites.", 50.0,
-                                "/images/ChutnuyPowders/DryGarlicChutnuy.jpg", chutney));
+                                "/images/ChutneyPowders/DryGarlicChutney.jpg", chutney));
                 items.add(
                                 item("Flaxseed Powder", "flaxseed-powder",
                                                 "Omega-3 rich flaxseed powder blended with regional spices.",
                                                 65.0,
-                                                "/images/ChutnuyPowders/FlaxSeedPowder.jpg",
+                                                "/images/ChutneyPowders/FlaxSeedPowder.jpg",
                                                 chutney));
                 items.add(
                                 item("Ellu (Sesame) Chutney Powder", "sesame-chutney",
                                                 "Rich sesame powder with a deep, earthy finish.",
                                                 60.0,
-                                                "/images/ChutnuyPowders/ElluSesamePowder.jpg",
+                                                "/images/ChutneyPowders/ElluSesamePowder.jpg",
                                                 chutney));
                 items.add(item("Rasam Powder", "rasam-powder",
                                 "Artisanal rasam mix that recreates the soul of Mysore's kitchens.", 70.0,
-                                "/images/ChutnuyPowders/RasamPowder.jpg", chutney));
+                                "/images/ChutneyPowders/RasamPowder.jpg", chutney));
 
                 // 7. Combo Packs
                 Category combo = categories.get("combo-packs");

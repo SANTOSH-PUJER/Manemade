@@ -7,19 +7,21 @@ public class UserResponse {
     private String email;
     private String mobileNumber;
     private String avatarUrl;
+    private String role;
     private java.util.List<AddressResponse> addresses;
 
     public UserResponse() {
     }
 
     public UserResponse(Long id, String firstName, String lastName, String email, String mobileNumber, String avatarUrl,
-            java.util.List<AddressResponse> addresses) {
+            String role, java.util.List<AddressResponse> addresses) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.mobileNumber = mobileNumber;
         this.avatarUrl = avatarUrl;
+        this.role = role;
         this.addresses = addresses;
     }
 
@@ -79,6 +81,14 @@ public class UserResponse {
         this.addresses = addresses;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public static UserResponseBuilder builder() {
         return new UserResponseBuilder();
     }
@@ -90,6 +100,7 @@ public class UserResponse {
         private String email;
         private String mobileNumber;
         private String avatarUrl;
+        private String role;
         private java.util.List<AddressResponse> addresses;
 
         public UserResponseBuilder id(Long id) {
@@ -122,13 +133,18 @@ public class UserResponse {
             return this;
         }
 
+        public UserResponseBuilder role(String role) {
+            this.role = role;
+            return this;
+        }
+
         public UserResponseBuilder addresses(java.util.List<AddressResponse> addresses) {
             this.addresses = addresses;
             return this;
         }
 
         public UserResponse build() {
-            return new UserResponse(id, firstName, lastName, email, mobileNumber, avatarUrl, addresses);
+            return new UserResponse(id, firstName, lastName, email, mobileNumber, avatarUrl, role, addresses);
         }
     }
 }

@@ -149,7 +149,7 @@ export function CartProvider({ children }) {
   };
 
   const value = useMemo(() => {
-    const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+    const cartCount = cartItems.length;
     const cartSubtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
     const deliveryFee = cartItems.length ? 48 : 0;
     const taxes = Math.round(cartSubtotal * 0.05);

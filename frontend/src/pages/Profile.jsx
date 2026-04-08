@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   User as UserIcon, Shield, CreditCard, Bell, LogOut, ChevronRight, 
@@ -30,13 +30,7 @@ const emptyAddress = {
   isDefault: false 
 };
 
-const avatars = [
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Jasper',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Midnight',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Scooter'
-];
+// Local avatar upload handles the profile picture instead of a picker.
 
 // --- Sub-components for a cleaner Profile page ---
 
@@ -84,7 +78,8 @@ function Profile() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
   const [geolocating, setGeolocating] = useState(false);
-  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Derived stats for the "Overview" tab
   const stats = useMemo(() => ({
@@ -193,17 +188,24 @@ function Profile() {
     }
   };
 
-  const handleUpdateAvatar = async (url) => {
-    setSavingProfile(true);
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast({ title: 'File too large', description: 'Maximum size is 5MB.', tone: 'error' });
+      return;
+    }
+
+    setUploadingAvatar(true);
     try {
-      const resp = await authService.updateUserProfile(user.id, { ...profileForm, avatarUrl: url });
-      updateUser(resp.data);
-      setShowAvatarPicker(false);
-      showToast({ title: 'Avatar updated', tone: 'success' });
-    } catch (err) {
-      showToast({ title: 'Error updating avatar' });
+      const response = await authService.uploadAvatar(user.id, file);
+      updateUser(response.data);
+      showToast({ title: 'Success', description: 'Profile photo updated.', tone: 'success' });
+    } catch (error) {
+      showToast({ title: 'Error', description: 'Failed to upload photo.', tone: 'error' });
     } finally {
-      setSavingProfile(false);
+      setUploadingAvatar(false);
     }
   };
 
@@ -255,42 +257,37 @@ function Profile() {
         <div className="relative z-10 flex flex-col items-center gap-8 md:flex-row md:justify-between">
           <div className="flex flex-col items-center gap-6 md:flex-row">
             <div className="relative group">
-              <div className="h-32 w-32 rounded-full border-4 border-white/20 p-1 backdrop-blur-sm transition-transform group-hover:scale-105">
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                className="h-40 w-40 rounded-full border-4 border-white/20 p-1.5 backdrop-blur-md shadow-2xl transition-all relative overflow-hidden ring-8 ring-white/5"
+              >
                 {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt="Avatar" className="h-full w-full rounded-full object-cover" />
+                  <img src={user.avatarUrl} alt="Avatar" className="h-full w-full rounded-full object-cover shadow-inner" />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-tr from-[#FF6B00] to-[#FFB37C] text-3xl font-black">
+                  <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-tr from-[#FF6B00] to-[#FFB37C] text-4xl font-black shadow-inner">
                      {profileForm.firstName?.[0]}{profileForm.lastName?.[0]}
                   </div>
                 )}
-              </div>
-              <button 
-                onClick={() => setShowAvatarPicker(!showAvatarPicker)}
-                className="absolute -bottom-2 -right-2 rounded-full bg-white p-2 text-black shadow-lg hover:bg-[#FF6B00] hover:text-white transition-colors"
-              >
-                <Camera size={16} />
-              </button>
-
-              <AnimatePresence>
-                {showAvatarPicker && (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                    className="absolute left-0 top-36 z-50 grid grid-cols-5 gap-2 rounded-3xl bg-white p-4 shadow-2xl dark:bg-zinc-900 border border-black/5"
-                  >
-                    {avatars.map((url, i) => (
-                      <button 
-                        key={i} 
-                        onClick={() => handleUpdateAvatar(url)}
-                        className="h-10 w-10 rounded-full border-2 border-transparent transition-all hover:border-[#FF6B00] overflow-hidden"
-                      >
-                        <img src={url} alt={`Avatar ${i}`} className="h-full w-full object-cover" />
-                      </button>
-                    ))}
-                  </motion.div>
+                
+                {uploadingAvatar && (
+                  <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                    <div className="h-8 w-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
                 )}
-              </AnimatePresence>
+
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                   <Camera size={24} className="text-white" />
+                   <span className="text-[10px] font-black uppercase text-white">Change Photo</span>
+                </div>
+              </motion.div>
+              
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleAvatarChange} 
+                className="hidden" 
+                accept="image/*" 
+              />
             </div>
 
             <div className="text-center md:text-left space-y-2">

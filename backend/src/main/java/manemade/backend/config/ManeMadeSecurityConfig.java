@@ -28,7 +28,7 @@ public class ManeMadeSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/user/register", "/api/user/login", "/api/user/generate-otp", "/api/user/verify-otp", "/api/user/reset-password", "/api/analytics/**").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/categories/**", "/api/items/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/categories/**", "/api/items/**", "/uploads/**").permitAll()
                 .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "ADMINISTRATOR")
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/categories/**", "/api/items/**").hasAnyRole("ADMIN", "ADMINISTRATOR")
                 .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/categories/**", "/api/items/**").hasAnyRole("ADMIN", "ADMINISTRATOR")

@@ -58,7 +58,12 @@ function AnimatedRoutes() {
         <Route path="/profile" element={wrap(<ProtectedRoute><Profile /></ProtectedRoute>)} />
         <Route path="/forgot-password" element={wrap(<ForgotPassword />)} />
         <Route path="/reset-password" element={wrap(<ResetPassword />)} />
-        <Route path="/admin" element={wrap(<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>)} />
+        <Route path="/admin" element={
+          <ProtectedRoute adminOnly>
+            {wrap(<AdminDashboard />)}
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/login" element={wrap(<Auth adminOnly />)} />
         <Route path="/admin/categories" element={wrap(<ProtectedRoute adminOnly><CategoryManagement /></ProtectedRoute>)} />
         <Route path="/admin/items" element={wrap(<ProtectedRoute adminOnly><ItemManagement /></ProtectedRoute>)} />
         <Route path="/admin/orders" element={wrap(<ProtectedRoute adminOnly><OrderManagement /></ProtectedRoute>)} />

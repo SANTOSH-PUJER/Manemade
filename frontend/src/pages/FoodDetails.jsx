@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Check, Clock, Info, Leaf, Plus, Minus, Share2, Star, Truck, Package } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useParams, useNavigate } from 'react-router-dom';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
@@ -14,6 +14,7 @@ import { itemService } from '../services/dataService';
 
 function FoodDetails() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const { menuItems } = useMenuData();
   const [dish, setDish] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,15 +34,21 @@ function FoodDetails() {
         const item = response.data;
         setDish({
           ...item,
+          name: item.itemName,
+          slug: item.itemSlug,
+          image: item.itemImage,
+          description: item.shortDescription,
           category: item.categoryName,
           rating: item.rating ?? 4.5,
           reviews: item.reviewCount ?? 0,
           type: item.isVeg === false ? 'non-veg' : 'veg',
-          deliveryTime: `${item.deliveryTimeMinutes || 25} mins`,
           ingredients: item.ingredients || [],
           tags: item.tags || [],
-          highlight: item.highlight || item.description,
+          highlight: item.highlight || item.shortDescription,
         });
+        if (item.categoryName === 'Rotti & Tiffin') {
+          setQuantity(10);
+        }
       } catch (error) {
         if (cancelled) return;
         if (error.response?.status === 404) setNotFound(true);
@@ -112,12 +119,6 @@ function FoodDetails() {
             {/* Badges on Image */}
             <div className="absolute left-8 top-8 flex flex-col gap-3">
               <Badge variant="primary" className="shadow-2xl">Featured</Badge>
-              {dish.type === 'veg' && (
-                <div className="flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 shadow-xl backdrop-blur-md">
-                   <Leaf size={12} fill="currentColor" />
-                   Pure Veg
-                </div>
-              )}
             </div>
 
             <button className="absolute right-8 top-8 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-black shadow-xl backdrop-blur-md transition-transform hover:scale-110 active:scale-95">
@@ -153,25 +154,18 @@ function FoodDetails() {
                   ))}
                 </div>
                 <span className="text-sm font-black text-[var(--text-primary)]">{dish.rating}</span>
-                <span className="text-xs font-bold text-[var(--text-muted)]">({dish.reviews} reviews)</span>
               </div>
             </div>
 
-            <div className="space-y-1">
-              <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Delivery</p>
-              <div className="flex items-center gap-2 text-sm font-black text-[var(--text-primary)]">
-                <Truck size={18} className="text-[var(--accent-strong)]" />
-                {dish.deliveryTime}
+            {dish.category !== 'Rotti & Tiffin' && (
+              <div className="space-y-1">
+                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Pack Size</p>
+                <div className="flex items-center gap-2 text-sm font-black text-[var(--text-primary)]">
+                  <Package size={18} className="text-blue-500" strokeWidth={3} />
+                  {dish.quantity || 'Standard'}
+                </div>
               </div>
-            </div>
-
-            <div className="space-y-1">
-              <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Pack Size</p>
-              <div className="flex items-center gap-2 text-sm font-black text-[var(--text-primary)]">
-                <Package size={18} className="text-blue-500" strokeWidth={3} />
-                {dish.quantity || 'Standard'}
-              </div>
-            </div>
+            )}
 
             <div className="space-y-1">
               <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Category</p>
@@ -213,27 +207,76 @@ function FoodDetails() {
               <p className="text-4xl font-black text-[var(--accent-strong)]">₹{dish.price * quantity}</p>
             </div>
             
-            <div className="flex items-center gap-4">
-               {/* Quantity Control */}
-               <div className="flex items-center gap-1 rounded-full border border-black/5 bg-black/5 p-1 dark:border-white/5">
-                 <button 
-                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                   className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black shadow-sm transition-all active:scale-90 hover:bg-[var(--surface-muted)]"
-                 >
-                   <Minus size={18} strokeWidth={3} />
-                 </button>
-                 <span className="w-12 text-center text-lg font-black">{quantity}</span>
-                 <button 
-                   onClick={() => setQuantity(q => q + 1)}
-                   className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black shadow-sm transition-all active:scale-90 hover:bg-[var(--surface-muted)]"
-                 >
-                   <Plus size={18} strokeWidth={3} />
-                 </button>
-               </div>
+            <div className="flex flex-wrap items-center gap-4">
+               {dish.category === 'Rotti & Tiffin' ? (
+                 <div className="flex items-center gap-4">
+                   {[10, 20, 'More'].map(opt => (
+                     <button
+                       key={opt}
+                       onClick={() => opt === 'More' ? setQuantity(30) : setQuantity(opt)}
+                       className={`h-12 px-8 rounded-full text-sm font-black transition-all active:scale-95 border-2 ${
+                         (opt === 'More' ? quantity > 20 : quantity === opt)
+                           ? 'bg-black text-white border-black'
+                           : 'bg-white text-black border-black/10 hover:border-black'
+                       }`}
+                     >
+                       {opt === 'More' ? (quantity > 20 ? `${quantity}+` : 'More') : opt}
+                     </button>
+                   ))}
+                   {quantity > 20 && (
+                     <div className="flex items-center gap-2">
+                        <input 
+                          type="number"
+                          min="1"
+                          value={quantity}
+                          onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                          className="w-20 h-12 rounded-xl border-2 border-black/10 px-3 text-center font-black focus:border-black focus:outline-none"
+                        />
+                        <div className="flex flex-col gap-1">
+                           <button onClick={() => setQuantity(q => q + 1)} className="p-1 hover:bg-black/5 rounded"><Plus size={12}/></button>
+                           <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-1 hover:bg-black/5 rounded"><Minus size={12}/></button>
+                        </div>
+                     </div>
+                   )}
+                 </div>
+               ) : (
+                 /* Quantity Control */
+                 <div className="flex items-center gap-1 rounded-full border border-black/5 bg-black/5 p-1 dark:border-white/5">
+                   <button 
+                     onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                     className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black shadow-sm transition-all active:scale-90 hover:bg-[var(--surface-muted)]"
+                   >
+                     <Minus size={18} strokeWidth={3} />
+                   </button>
+                   <span className="w-12 text-center text-lg font-black">{quantity}</span>
+                   <button 
+                     onClick={() => setQuantity(q => q + 1)}
+                     className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black shadow-sm transition-all active:scale-90 hover:bg-[var(--surface-muted)]"
+                   >
+                     <Plus size={18} strokeWidth={3} />
+                   </button>
+                 </div>
+               )}
 
-               <Button size="lg" className="px-10 py-6 text-lg shadow-xl" onClick={handleAddToCart}>
-                 Add to Basket
-               </Button>
+               <div className="flex items-center gap-3">
+                  <Button 
+                    variant="secondary"
+                    className="px-8 py-5 border-2 border-black font-black"
+                    onClick={handleAddToCart}
+                  >
+                    Add to Basket
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    className="px-10 py-5 text-lg shadow-xl" 
+                    onClick={async () => {
+                      await handleAddToCart();
+                      navigate('/checkout');
+                    }}
+                  >
+                    Buy Now
+                  </Button>
+               </div>
             </div>
           </div>
         </motion.div>

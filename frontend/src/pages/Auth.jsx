@@ -9,8 +9,8 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Badge from '../components/ui/Badge';
 
-function Auth({ mode: initialMode }) {
-  const [mode, setMode] = useState(initialMode);
+function Auth({ mode: initialMode, adminOnly = false }) {
+  const [mode, setMode] = useState(adminOnly ? 'login' : initialMode);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -65,6 +65,7 @@ function Auth({ mode: initialMode }) {
           email: formData.email,
           mobileNumber: formData.phone,
           password: formData.password,
+          role: 'USER'
         });
       } else {
         await login({ 
@@ -83,9 +84,22 @@ function Auth({ mode: initialMode }) {
         // Pre-fill email for login UX but clear other fields as needed
         setFormData(prev => ({ ...prev, password: '' }));
       } else {
+        // Post-login role check for Admins
+        if (adminOnly && response.user.role !== 'ADMIN' && response.user.role !== 'ADMINISTRATOR') {
+          // If a standard user tries to login through /admin, block them
+          await logout();
+          showToast({ 
+            title: 'Access Denied', 
+            description: 'You must have administrator privileges to enter this portal.',
+            tone: 'error' 
+          });
+          setLoading(false);
+          return;
+        }
+
         showToast({ 
           title: 'Welcome back!', 
-          description: 'Happy ordering!',
+          description: adminOnly ? 'Administrator Portal Access Granted.' : 'Happy ordering!',
           tone: 'success' 
         });
         navigate(redirectTo, { replace: true });
@@ -123,17 +137,19 @@ function Auth({ mode: initialMode }) {
       <div className="flex flex-col p-8 sm:p-12 lg:p-16 overflow-y-auto max-h-[800px] scrollbar-hide">
         <div className="w-full max-w-sm mx-auto">
           {/* Tab Selection */}
-          <div className="mb-12 inline-flex w-full rounded-2xl bg-gray-100 p-1.5 shadow-inner dark:bg-gray-800">
-            {['login', 'register'].map((t) => (
-              <button
-                key={t}
-                onClick={() => { setMode(t); setErrors({}); }}
-                className={`flex-1 rounded-xl py-3 text-sm font-black uppercase tracking-widest transition-all duration-300 ${mode === t ? 'bg-white text-gray-900 shadow-lg dark:bg-gray-700 dark:text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
+          {!adminOnly && (
+            <div className="mb-12 inline-flex w-full rounded-2xl bg-gray-100 p-1.5 shadow-inner dark:bg-gray-800">
+              {['login', 'register'].map((t) => (
+                <button
+                  key={t}
+                  onClick={() => { setMode(t); setErrors({}); }}
+                  className={`flex-1 rounded-xl py-3 text-sm font-black uppercase tracking-widest transition-all duration-300 ${mode === t ? 'bg-white text-gray-900 shadow-lg dark:bg-gray-700 dark:text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -145,10 +161,10 @@ function Auth({ mode: initialMode }) {
             >
               <div className="space-y-3">
                 <p className="text-[10px] font-black uppercase tracking-widest text-[var(--accent-strong)]">
-                  {mode === 'login' ? 'Access your account' : 'Join the experience'}
+                  {adminOnly ? 'Administrator Access' : (mode === 'login' ? 'Access your account' : 'Join the experience')}
                 </p>
                 <h1 className="font-display text-4xl font-black tracking-tight leading-tight">
-                  {mode === 'login' ? 'Welcome back to Manemade.' : 'Start your flavor journey here.'}
+                  {adminOnly ? 'ManeMade Admin Portal.' : (mode === 'login' ? 'Welcome back to Manemade.' : 'Start your flavor journey here.')}
                 </h1>
               </div>
 
@@ -226,7 +242,7 @@ function Auth({ mode: initialMode }) {
                   className="w-full py-6 text-lg shadow-xl" 
                   disabled={loading}
                 >
-                  {loading ? 'Authenticating...' : mode === 'login' ? 'Confirm & Secure Login' : 'Create My Account'}
+                  {loading ? 'Authenticating...' : (adminOnly ? 'Authenticate as Admin' : (mode === 'login' ? 'Confirm & Secure Login' : 'Create My Account'))}
                   {!loading && <ArrowRight size={20} className="ml-2" />}
                 </Button>
               </form>

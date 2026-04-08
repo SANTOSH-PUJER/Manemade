@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
                 .email(request.getEmail())
                 .mobileNumber(request.getMobileNumber())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .role("USER")
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -245,6 +246,7 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .mobileNumber(user.getMobileNumber())
                 .avatarUrl(user.getAvatarUrl())
+                .role(user.getRole())
                 .addresses(user.getAddresses() != null ? user.getAddresses().stream()
                         .filter(a -> !a.getIsDeleted())
                         .map(this::mapAddressToResponse)

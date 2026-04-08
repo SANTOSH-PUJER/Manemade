@@ -84,11 +84,6 @@ export default function DishCard({ dish }) {
           </div>
 
           <div className="flex items-center gap-4 border-t border-black/5 pt-4 text-[9px] font-black uppercase tracking-widest text-[var(--text-muted)] dark:border-white/5">
-            <div className="flex items-center gap-1.5 font-black text-[var(--text-primary)]">
-              <Timer size={14} className="text-[var(--accent-primary)]" />
-              {dish.deliveryTime}
-            </div>
-            <div className="h-1 w-1 rounded-full bg-[var(--text-muted)] opacity-30" />
             <div className="truncate flex-1 font-black text-[var(--text-secondary)]">
               {dish.category}
             </div>

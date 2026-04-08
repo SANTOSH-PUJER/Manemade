@@ -11,7 +11,8 @@ function ProtectedRoute({ children, adminOnly = false }) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    const redirectPath = adminOnly ? '/admin' : '/login';
+    return <Navigate to={redirectPath} replace state={{ from: location.pathname }} />;
   }
 
   if (adminOnly && user?.role !== 'ADMIN' && user?.role !== 'ADMINISTRATOR') {
