@@ -22,7 +22,7 @@ const sections = [
 
 export default function Footer() {
   return (
-    <footer className="mt-20 border-t border-black/5 bg-[var(--surface)] pt-20 pb-12 dark:border-white/5">
+    <footer className="mt-20 border-t border-black/5 bg-[var(--surface)] pt-20 pb-32 sm:pb-12 dark:border-white/5">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <div className="grid gap-16 lg:grid-cols-3 lg:gap-24 text-center lg:text-left">
           {/* Brand Column */}

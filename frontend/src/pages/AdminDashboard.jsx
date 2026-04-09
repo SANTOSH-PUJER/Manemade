@@ -73,7 +73,7 @@ function AdminDashboard() {
 
   return (
     <AdminLayout>
-      <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-8 sm:mb-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Badge variant="primary" className="bg-orange-500 text-white border-0">Live Systems</Badge>
@@ -87,7 +87,7 @@ function AdminDashboard() {
                 </span>
             )}
           </div>
-          <h1 className="font-display text-5xl font-black tracking-tight leading-tight">Overview</h1>
+          <h1 className="font-display text-4xl sm:text-5xl font-black tracking-tight leading-tight">Overview</h1>
         </div>
         <div className="flex items-center gap-3">
              <div className="text-right hidden sm:block">
@@ -97,7 +97,7 @@ function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat, index) => (
           <motion.div
             key={stat.label}
@@ -105,19 +105,19 @@ function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card className="p-6 space-y-4 shadow-xl border-black/5 dark:border-white/5 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+            <Card className="p-5 sm:p-6 space-y-4 shadow-xl border-black/5 dark:border-white/5 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
               <div className="flex items-start justify-between">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${stat.bg} ${stat.color} shadow-inner`}>
-                  <stat.icon size={24} />
+                <div className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl ${stat.bg} ${stat.color} shadow-inner`}>
+                  <stat.icon size={20} className="sm:size-[24px]" />
                 </div>
                 <div className="p-2 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
                     <ArrowUpRight size={16} />
                 </div>
               </div>
               <div className="space-y-0.5">
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">{stat.label}</p>
+                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">{stat.label}</p>
                 <div className="flex items-baseline gap-2">
-                    <p className="text-3xl font-black tracking-tight">{stat.value}</p>
+                    <p className="text-2xl sm:text-3xl font-black tracking-tight">{stat.value}</p>
                 </div>
                 <p className="text-[10px] font-bold text-gray-400">{stat.sub}</p>
               </div>
@@ -128,9 +128,9 @@ function AdminDashboard() {
         ))}
       </div>
 
-      <div className="mt-12 grid gap-8 lg:grid-cols-3">
+      <div className="mt-8 sm:mt-12 grid gap-6 sm:gap-8 lg:grid-cols-3">
          {/* Revenue Trends Chart */}
-         <Card className="lg:col-span-2 p-8 space-y-8 shadow-xl border-black/5 dark:border-white/5 relative overflow-hidden">
+         <Card className="lg:col-span-2 p-6 sm:p-8 space-y-6 sm:space-y-8 shadow-xl border-black/5 dark:border-white/5 relative overflow-hidden">
             <div className="flex items-center justify-between">
                <div>
                   <h3 className="text-2xl font-black tracking-tight">Revenue Trends</h3>

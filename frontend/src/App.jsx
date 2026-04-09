@@ -70,6 +70,11 @@ function AnimatedRoutes() {
             {wrap(<AdminDashboard />)}
           </ProtectedRoute>
         } />
+        <Route path="/admin/dashboard" element={
+          <ProtectedRoute adminOnly>
+            {wrap(<AdminDashboard />)}
+          </ProtectedRoute>
+        } />
         <Route path="/admin/login" element={wrap(<Auth adminOnly />)} />
         <Route path="/admin/categories" element={wrap(<ProtectedRoute adminOnly><CategoryManagement /></ProtectedRoute>)} />
         <Route path="/admin/items" element={wrap(<ProtectedRoute adminOnly><ItemManagement /></ProtectedRoute>)} />

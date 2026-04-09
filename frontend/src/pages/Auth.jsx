@@ -161,9 +161,9 @@ function Auth({ mode: initialMode, adminOnly = false }) {
   };
 
   return (
-    <div className="mx-auto max-w-[1200px] overflow-hidden rounded-[var(--radius-xl)] bg-white shadow-[var(--shadow-strong)] lg:grid lg:grid-cols-2 dark:bg-gray-900 transition-colors duration-500">
+    <div className="mx-auto max-w-[1200px] overflow-hidden rounded-[var(--radius-xl)] bg-white shadow-[var(--shadow-strong)] lg:grid lg:grid-cols-2 dark:bg-gray-900 transition-all duration-500">
       {/* Left: Imagery */}
-      <div className="relative hidden lg:block h-[100%] min-h-[800px]">
+      <div className="relative hidden lg:block h-full min-h-[800px]">
         <img 
           src={showcaseImage} 
           alt="Premium food" 
@@ -174,7 +174,7 @@ function Auth({ mode: initialMode, adminOnly = false }) {
         <div className="absolute inset-x-12 bottom-12 space-y-4">
            <Badge variant="primary" className="shadow-2xl">Premium Access</Badge>
            <h2 className="font-display text-5xl font-black text-white leading-[1.1] tracking-tight">
-             Regional flavors, <br /> delivered with <span className="text-[var(--accent-strong)]">excellence.</span>
+             Regional flavors, <br /> delivered with <span className="text-orange-600">excellence.</span>
            </h2>
            <p className="max-w-md text-lg font-medium text-white/70">
              Join our community of food connoisseurs and experience the true taste of North Karnataka.
@@ -183,16 +183,16 @@ function Auth({ mode: initialMode, adminOnly = false }) {
       </div>
 
       {/* Right: Forms */}
-      <div className="flex flex-col p-8 sm:p-12 lg:p-16 overflow-y-auto max-h-[800px] scrollbar-hide">
+      <div className="flex flex-col p-6 sm:p-12 lg:p-16 lg:overflow-y-auto lg:max-h-[800px] scrollbar-hide">
         <div className="w-full max-w-sm mx-auto">
           {/* Tab Selection (Register / Login) */}
           {!adminOnly && (
-            <div className="mb-8 inline-flex w-full rounded-2xl bg-gray-100 p-1.5 shadow-inner dark:bg-gray-800">
+            <div className="mb-6 sm:mb-8 inline-flex w-full rounded-2xl bg-gray-100 p-1.5 shadow-inner dark:bg-gray-800">
               {['login', 'register'].map((t) => (
                 <button
                   key={t}
                   onClick={() => { setMode(t); setErrors({}); setOtpSent(false); }}
-                  className={`flex-1 rounded-xl py-3 text-sm font-black uppercase tracking-widest transition-all duration-300 ${mode === t ? 'bg-white text-gray-900 shadow-lg dark:bg-gray-700 dark:text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}
+                  className={`flex-1 rounded-xl py-3 text-[10px] sm:text-sm font-black uppercase tracking-widest transition-all duration-300 ${mode === t ? 'bg-white text-gray-900 shadow-lg dark:bg-gray-700 dark:text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}
                 >
                   {t}
                 </button>
@@ -206,13 +206,13 @@ function Auth({ mode: initialMode, adminOnly = false }) {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
+              className="space-y-6 sm:space-y-8"
             >
               <div className="space-y-3">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--accent-strong)]">
+                <p className="text-[10px] font-black uppercase tracking-widest text-orange-600">
                   {adminOnly ? 'Administrator Access' : (mode === 'login' ? 'Access your account' : 'Join the experience')}
                 </p>
-                <h1 className="font-display text-4xl font-black tracking-tight leading-tight">
+                <h1 className="font-display text-3xl sm:text-4xl font-black tracking-tight leading-tight">
                   {adminOnly ? 'ManeMade Admin Portal.' : (mode === 'login' ? 'Welcome back.' : 'Experience the joy of food.')}
                 </h1>
               </div>

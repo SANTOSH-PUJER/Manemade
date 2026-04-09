@@ -33,19 +33,19 @@ export default function CategoryHighlights({ categories }) {
   };
 
   return (
-    <section className="space-y-8 py-12">
-      <div className="flex items-end justify-between px-2">
+    <section className="space-y-6 sm:space-y-8 py-8 sm:py-12">
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between px-2 gap-4">
         <div className="space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[var(--accent-primary)]">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-orange-500">
             Curated Collections
           </p>
-          <h2 className="font-display text-4xl font-black tracking-tight">
-            Explore by Category
+          <h2 className="font-display text-3xl sm:text-4xl font-black tracking-tight">
+            Explore Categories
           </h2>
         </div>
         <Link
           to="/shop"
-          className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] transition-all hover:text-[var(--accent-primary)]"
+          className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] transition-all hover:text-orange-500"
         >
           View all
           <ChevronRight size={14} strokeWidth={3} className="transition-transform group-hover:translate-x-1" />

@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Search, Trash2, Edit2, Package, Image as ImageIcon, CheckCircle, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import api from '../services/userService';
+import { itemService, categoryService } from '../services/dataService';
 import AdminLayout from '../components/layout/AdminLayout';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
@@ -17,6 +17,16 @@ export default function ItemManagement() {
   const [editingItem, setEditingItem] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { showToast } = useToast();
+
+  const normalizeItem = (item) => ({
+    ...item,
+    name: item.itemName,
+    slug: item.itemSlug,
+    description: item.shortDescription,
+    image: item.itemImage,
+    categoryName: item.categoryName,
+    isAvailable: item.isAvailable,
+  });
 
   const [newItem, setNewItem] = useState({
     name: '',
@@ -38,11 +48,11 @@ export default function ItemManagement() {
     setLoading(true);
     try {
       const [itemResp, catResp] = await Promise.all([
-        api.get('/item/all'),
-        api.get('/category/all')
+        itemService.getAll(),
+        categoryService.getAll()
       ]);
-      setItems(itemResp.data);
-      setCategories(catResp.data);
+      setItems((itemResp.data || []).map(normalizeItem));
+      setCategories(catResp.data || []);
     } catch (err) {
       showToast({ title: 'Error', description: 'Failed to load data.' });
     } finally {
@@ -79,17 +89,21 @@ export default function ItemManagement() {
     if (!newItem.categoryName) return showToast({ title: 'Error', description: 'Please select a category.' });
     
     const finalItem = {
-        ...newItem,
-        slug: newItem.slug || newItem.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
+        itemName: newItem.name,
+        itemSlug: newItem.slug || newItem.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
+        shortDescription: newItem.description,
+        itemImage: newItem.imageUrl,
+        price: newItem.price,
+        isAvailable: newItem.isAvailable,
         category: { name: newItem.categoryName } 
     };
 
     try {
       if (editingItem) {
-        await api.put(`/item/${editingItem.id}`, finalItem);
+        await itemService.update(editingItem.id, finalItem);
         showToast({ title: 'Updated', description: 'Item modified successfully.', tone: 'success' });
       } else {
-        await api.post('/item/create', finalItem);
+        await itemService.create(finalItem);
         showToast({ title: 'Success', description: 'Item added to inventory.', tone: 'success' });
       }
       setIsModalOpen(false);
@@ -118,7 +132,7 @@ export default function ItemManagement() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this item?')) return;
     try {
-      await api.delete(`/item/${id}`);
+      await itemService.delete(id);
       showToast({ title: 'Deleted', description: 'Item removed.', tone: 'success' });
       loadData();
     } catch (err) {
@@ -133,28 +147,34 @@ export default function ItemManagement() {
 
   return (
     <AdminLayout>
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-12">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-8 sm:mb-12">
         <div className="space-y-1">
           <Badge variant="primary">Inventory Control</Badge>
-          <h1 className="font-display text-4xl font-black tracking-tight">Item Manager</h1>
+          <h1 className="font-display text-3xl sm:text-4xl font-black tracking-tight leading-tight">Item Manager</h1>
         </div>
-        <Button icon={Plus} onClick={() => { setEditingItem(null); setNewItem({ name: '', slug: '', categoryName: '', description: '', imageUrl: '', price: 0, isVeg: true, isAvailable: true, spiceLevel: 1, deliveryTimeMinutes: 25, ingredients: '', tags: '', highlight: '' }); setIsModalOpen(true); }}>Add New Item</Button>
+        <Button 
+          icon={Plus} 
+          className="w-full sm:w-auto"
+          onClick={() => { setEditingItem(null); setNewItem({ name: '', slug: '', categoryName: '', description: '', imageUrl: '', price: 0, isVeg: true, isAvailable: true, spiceLevel: 1, deliveryTimeMinutes: 25, ingredients: '', tags: '', highlight: '' }); setIsModalOpen(true); }}
+        >
+          Add New Item
+        </Button>
       </div>
 
       <Card className="overflow-hidden border-black/5 dark:border-white/5">
-        <div className="p-6 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="relative w-full max-w-md">
-                <Search className="absolute left-4 top-3.5 text-gray-400" size={18} />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                 <input 
                     type="text" 
                     placeholder="Search menu items..." 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-gray-50 border-none rounded-2xl py-3 pl-12 pr-6 text-sm font-bold focus:ring-2 focus:ring-orange-500/20 dark:bg-gray-900"
+                    className="w-full h-11 sm:h-auto bg-gray-50 border-none rounded-2xl py-3 pl-12 pr-6 text-sm font-bold focus:ring-2 focus:ring-orange-500/20 dark:bg-gray-900"
                 />
             </div>
-            <div className="text-xs font-black text-gray-500 uppercase tracking-widest px-4">
-                Total: {filtered.length}
+            <div className="text-[10px] sm:text-xs font-black text-gray-500 uppercase tracking-widest sm:px-4">
+                Total: {filtered.length} Items
             </div>
         </div>
 
@@ -217,15 +237,15 @@ export default function ItemManagement() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="w-full max-w-2xl bg-white rounded-3xl p-8 shadow-2xl dark:bg-gray-800 my-auto"
+              className="w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl dark:bg-gray-800 my-auto max-h-[90vh] overflow-y-auto"
             >
-              <div className="mb-8 flex items-center justify-between">
+              <div className="mb-6 sm:mb-8 flex items-center justify-between">
                 <div className="space-y-1">
-                    <h3 className="text-2xl font-black tracking-tight">{editingItem ? 'Edit Menu Item' : 'New Menu Item'}</h3>
-                    <p className="text-gray-500 text-sm font-bold">{editingItem ? `Modifying ${editingItem.name}` : 'Add a fresh dish to the platform.'}</p>
+                    <h3 className="text-xl sm:text-2xl font-black tracking-tight">{editingItem ? 'Edit Menu Item' : 'New Menu Item'}</h3>
+                    <p className="text-gray-500 text-xs sm:text-sm font-bold">{editingItem ? `Modifying ${editingItem.name}` : 'Add a fresh dish to the platform.'}</p>
                 </div>
-                <button onClick={() => setIsModalOpen(false)} className="h-10 w-10 rounded-full hover:bg-gray-100 flex items-center justify-center dark:hover:bg-gray-700">
-                    <XCircle size={24} />
+                <button onClick={() => setIsModalOpen(false)} className="h-8 w-8 sm:h-10 sm:w-10 rounded-full hover:bg-gray-100 flex items-center justify-center dark:hover:bg-gray-700">
+                    <XCircle size={20} className="sm:size-[24px]" />
                 </button>
               </div>
 
@@ -333,7 +353,7 @@ export default function ItemManagement() {
                         />
                         <span className="text-sm font-black group-hover:text-orange-500 transition-colors">Instant Available</span>
                     </label>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 sm:col-span-2 lg:col-span-1">
                         <span className="text-sm font-black">Spice Level</span>
                         <div className="flex gap-1">
                             {[1, 2, 3].map(lvl => (

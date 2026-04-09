@@ -37,16 +37,16 @@ function FaqItem({ question, answer, isOpen, toggle }) {
     <div className="border-b border-gray-100 dark:border-white/5 last:border-0 overflow-hidden">
       <button 
         onClick={toggle}
-        className="w-full py-6 flex items-center justify-between text-left group"
+        className="w-full py-5 sm:py-6 flex items-center justify-between text-left group gap-4"
       >
-        <span className={`text-lg font-black transition-colors ${isOpen ? 'text-[var(--accent-strong)]' : 'text-gray-900 dark:text-white group-hover:text-[var(--accent-strong)]'}`}>
+        <span className={`text-base sm:text-lg font-black transition-colors ${isOpen ? 'text-orange-600' : 'text-gray-900 dark:text-white group-hover:text-orange-600'}`}>
           {question}
         </span>
         <motion.div
            animate={{ rotate: isOpen ? 180 : 0 }}
-           className={`flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800 transition-colors ${isOpen ? 'bg-[var(--accent-strong)] text-white' : 'text-gray-500'}`}
+           className={`flex-shrink-0 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800 transition-colors ${isOpen ? 'bg-orange-600 text-white' : 'text-gray-500'}`}
         >
-          <ChevronDown size={18} />
+          <ChevronDown size={16} className="sm:size-[18px]" />
         </motion.div>
       </button>
       
@@ -58,7 +58,7 @@ function FaqItem({ question, answer, isOpen, toggle }) {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <div className="pb-8 text-gray-500 dark:text-gray-400 font-medium leading-relaxed max-w-3xl">
+            <div className="pb-6 sm:pb-8 text-sm sm:text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed max-w-3xl">
               {answer}
             </div>
           </motion.div>
@@ -72,20 +72,20 @@ export default function Faq() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pt-24 pb-20">
-      <div className="mx-auto max-w-4xl px-6 lg:px-12">
-        <div className="text-center space-y-4 mb-20">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pt-16 lg:pt-24 pb-20">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-12">
+        <div className="text-center space-y-4 mb-12 lg:mb-20">
           <Badge variant="primary">Common Questions</Badge>
-          <h1 className="font-display text-5xl md:text-6xl font-black text-gray-900 dark:text-white tracking-tight">
-            Frequently Asked <span className="text-[var(--accent-strong)]">Questions.</span>
+          <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+            Frequently Asked <span className="text-orange-600">Questions.</span>
           </h1>
-          <p className="max-w-2xl mx-auto text-lg text-gray-500 dark:text-gray-400 font-medium">
+          <p className="max-w-2xl mx-auto text-base sm:text-lg text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
             Everything you need to know about the ManeMade experience, delivery, and quality standards.
           </p>
         </div>
 
         <motion.div 
-          className="bg-white dark:bg-gray-800 rounded-[var(--radius-3xl)] p-8 md:p-12 shadow-[var(--shadow-strong)] border border-gray-100 dark:border-white/5"
+          className="bg-white dark:bg-gray-800 rounded-[var(--radius-3xl)] p-6 sm:p-10 lg:p-12 shadow-[var(--shadow-strong)] border border-gray-100 dark:border-white/5"
         >
           {faqs.map((faq, i) => (
             <FaqItem 
@@ -98,19 +98,19 @@ export default function Faq() {
         </motion.div>
 
         {/* Still Have Questions? */}
-        <div className="mt-20 p-12 rounded-[var(--radius-3xl)] bg-black text-white text-center space-y-8 relative overflow-hidden">
+        <div className="mt-16 sm:mt-20 p-8 sm:p-12 rounded-[var(--radius-3xl)] bg-black text-white text-center space-y-8 relative overflow-hidden">
            <div className="relative z-10">
-              <h2 className="font-display text-3xl font-black mb-4">Still have questions?</h2>
-              <p className="text-gray-400 font-medium max-w-lg mx-auto mb-8">
+              <h2 className="font-display text-2xl sm:text-3xl font-black mb-4">Still have questions?</h2>
+              <p className="text-xs sm:text-sm text-gray-400 font-medium max-w-lg mx-auto mb-8">
                 If you couldn't find your answer here, our friendly support team is always ready to help you.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                 <Button className="rounded-full px-10 h-14 font-black uppercase tracking-widest text-sm">
-                   <MessageCircle size={18} className="mr-2" /> Start Live Chat
+                 <Button className="rounded-full px-10 h-12 sm:h-14 font-black uppercase tracking-widest text-xs sm:text-sm w-full sm:w-auto">
+                   <MessageCircle size={18} className="mr-2" /> Start Chat
                  </Button>
-                 <Link to="/contact">
-                   <Button variant="outline" className="rounded-full px-10 h-14 font-black uppercase tracking-widest text-sm border-white/20 text-white hover:bg-white/10 w-full sm:w-auto">
-                     Visit Contact Page
+                 <Link to="/contact" className="w-full sm:w-auto">
+                   <Button variant="outline" className="rounded-full px-10 h-12 sm:h-14 font-black uppercase tracking-widest text-xs sm:text-sm border-white/20 text-white hover:bg-white/10 w-full">
+                     Contact Us
                    </Button>
                  </Link>
               </div>

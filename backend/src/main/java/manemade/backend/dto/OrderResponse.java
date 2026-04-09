@@ -13,6 +13,9 @@ public class OrderResponse {
     private String paymentStatus;
     private Long paymentId;
     private String transactionId;
+    private String userName;
+    private String userMobile;
+    private String deliveryAddress;
     private List<OrderItemResponse> items;
     private LocalDateTime createdTs;
 
@@ -41,6 +44,12 @@ public class OrderResponse {
     public void setPaymentId(Long paymentId) { this.paymentId = paymentId; }
     public String getTransactionId() { return transactionId; }
     public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+    public String getUserMobile() { return userMobile; }
+    public void setUserMobile(String userMobile) { this.userMobile = userMobile; }
+    public String getDeliveryAddress() { return deliveryAddress; }
+    public void setDeliveryAddress(String deliveryAddress) { this.deliveryAddress = deliveryAddress; }
     public List<OrderItemResponse> getItems() { return items; }
     public void setItems(List<OrderItemResponse> items) { this.items = items; }
     public LocalDateTime getCreatedTs() { return createdTs; }
@@ -49,6 +58,7 @@ public class OrderResponse {
     public static class OrderItemResponse {
         private Long itemId;
         private String itemName;
+        private String attributeQuantity;
         private int quantity;
         private double price;
 
@@ -63,6 +73,8 @@ public class OrderResponse {
         public void setItemId(Long itemId) { this.itemId = itemId; }
         public String getItemName() { return itemName; }
         public void setItemName(String itemName) { this.itemName = itemName; }
+        public String getAttributeQuantity() { return attributeQuantity; }
+        public void setAttributeQuantity(String attributeQuantity) { this.attributeQuantity = attributeQuantity; }
         public int getQuantity() { return quantity; }
         public void setQuantity(int quantity) { this.quantity = quantity; }
         public double getPrice() { return price; }
@@ -72,6 +84,7 @@ public class OrderResponse {
             private OrderItemResponse instance = new OrderItemResponse();
             public OrderItemResponseBuilder itemId(Long itemId) { instance.setItemId(itemId); return this; }
             public OrderItemResponseBuilder itemName(String itemName) { instance.setItemName(itemName); return this; }
+            public OrderItemResponseBuilder attributeQuantity(String attributeQuantity) { instance.setAttributeQuantity(attributeQuantity); return this; }
             public OrderItemResponseBuilder quantity(int quantity) { instance.setQuantity(quantity); return this; }
             public OrderItemResponseBuilder price(double price) { instance.setPrice(price); return this; }
             public OrderItemResponse build() { return instance; }
@@ -89,6 +102,9 @@ public class OrderResponse {
         public OrderResponseBuilder paymentStatus(String paymentStatus) { instance.setPaymentStatus(paymentStatus); return this; }
         public OrderResponseBuilder paymentId(Long paymentId) { instance.setPaymentId(paymentId); return this; }
         public OrderResponseBuilder transactionId(String transactionId) { instance.setTransactionId(transactionId); return this; }
+        public OrderResponseBuilder userName(String userName) { instance.setUserName(userName); return this; }
+        public OrderResponseBuilder userMobile(String userMobile) { instance.setUserMobile(userMobile); return this; }
+        public OrderResponseBuilder deliveryAddress(String deliveryAddress) { instance.setDeliveryAddress(deliveryAddress); return this; }
         public OrderResponseBuilder items(List<OrderItemResponse> items) { instance.setItems(items); return this; }
         public OrderResponseBuilder createdTs(LocalDateTime createdTs) { instance.setCreatedTs(createdTs); return this; }
         public OrderResponse build() { return instance; }

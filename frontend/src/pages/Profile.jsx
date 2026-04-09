@@ -55,12 +55,12 @@ const StatCard = ({ icon: Icon, label, value, trend, colorClass }) => (
 );
 
 const SectionHeader = ({ title, subtitle, action }) => (
-  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 sm:mb-12">
     <div className="space-y-1">
-      <h2 className="text-3xl font-black tracking-tight">{title}</h2>
-      {subtitle && <p className="text-[var(--text-muted)] font-medium text-sm">{subtitle}</p>}
+      <h2 className="text-2xl sm:text-3xl font-black tracking-tight">{title}</h2>
+      {subtitle && <p className="text-[var(--text-muted)] font-medium text-xs sm:text-sm">{subtitle}</p>}
     </div>
-    {action}
+    {action && <div className="w-full sm:w-auto">{action}</div>}
   </div>
 );
 
@@ -248,23 +248,23 @@ function Profile() {
   ];
 
   return (
-    <div className="mx-auto max-w-7xl px-6 lg:px-12 pt-24 pb-32 bg-[var(--background)] min-h-screen">
-      {/* Hero Header Section */}
-      <div className="relative mb-12 overflow-hidden rounded-[var(--radius-xl)] bg-black p-8 text-white shadow-2xl lg:p-12">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 pt-20 sm:pt-24 pb-20 sm:pb-32 bg-[var(--background)] min-h-screen">
+      {/* Hero Header Section - Improved Mobile Layout */}
+      <div className="relative mb-8 sm:mb-12 overflow-hidden rounded-2xl sm:rounded-[var(--radius-xl)] bg-black p-6 sm:p-8 lg:p-12 text-white shadow-2xl">
         <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B00] via-[#FF8C37] to-black opacity-30"></div>
         <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#FF6B00] blur-[120px] opacity-40"></div>
         
-        <div className="relative z-10 flex flex-col items-center gap-8 md:flex-row md:justify-between">
-          <div className="flex flex-col items-center gap-6 md:flex-row">
-            <div className="relative group">
+        <div className="relative z-10 flex flex-col items-center gap-8 lg:flex-row lg:justify-between lg:items-center">
+          <div className="flex flex-col items-center gap-6 sm:flex-row w-full lg:w-auto">
+            <div className="relative group shrink-0">
               <motion.div 
                 whileHover={{ scale: 1.05 }}
-                className="h-40 w-40 rounded-full border-4 border-white/20 p-1.5 backdrop-blur-md shadow-2xl transition-all relative overflow-hidden ring-8 ring-white/5"
+                className="h-32 w-32 sm:h-40 sm:w-40 rounded-full border-4 border-white/20 p-1 backdrop-blur-md shadow-2xl transition-all relative overflow-hidden ring-8 ring-white/5"
               >
                 {user.avatarUrl ? (
                   <img src={user.avatarUrl} alt="Avatar" className="h-full w-full rounded-full object-cover shadow-inner" />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-tr from-[#FF6B00] to-[#FFB37C] text-4xl font-black shadow-inner">
+                  <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-tr from-[#FF6B00] to-[#FFB37C] text-3xl sm:text-4xl font-black shadow-inner">
                      {profileForm.firstName?.[0]}{profileForm.lastName?.[0]}
                   </div>
                 )}
@@ -276,8 +276,8 @@ function Profile() {
                 )}
 
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                   <Camera size={24} className="text-white" />
-                   <span className="text-[10px] font-black uppercase text-white">Change Photo</span>
+                   <Camera size={20} className="text-white sm:size-[24px]" />
+                   <span className="text-[8px] sm:text-[10px] font-black uppercase text-white">Change Photo</span>
                 </div>
               </motion.div>
               
@@ -290,45 +290,61 @@ function Profile() {
               />
             </div>
 
-            <div className="text-center md:text-left space-y-2">
-              <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
-                <h1 className="text-4xl font-black tracking-tight">{profileForm.firstName} {profileForm.lastName}</h1>
-                <Badge variant="primary" className="bg-white/20 text-white backdrop-blur-md border-white/10 px-3 py-1 text-[10px] uppercase font-black tracking-widest leading-none">
+            <div className="text-center sm:text-left space-y-2 flex-1">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 sm:justify-start">
+                <h1 className="text-2xl sm:text-4xl font-black tracking-tight">{profileForm.firstName} {profileForm.lastName}</h1>
+                <Badge variant="primary" className="bg-white/20 text-white backdrop-blur-md border-white/10 px-3 py-1 text-[8px] sm:text-[10px] uppercase font-black tracking-widest leading-none">
                   PRO MEMBER
                 </Badge>
               </div>
-              <p className="flex items-center justify-center gap-2 text-sm font-medium text-white/70 md:justify-start">
-                <Mail size={14} /> {profileForm.email}
+              <p className="flex items-center justify-center gap-2 text-xs sm:text-sm font-medium text-white/70 sm:justify-start">
+                <Mail size={12} className="sm:size-[14px]" /> {profileForm.email}
               </p>
-              <p className="flex items-center justify-center gap-2 text-sm font-medium text-white/70 md:justify-start">
-                <Smartphone size={14} /> {profileForm.mobileNumber}
+              <p className="flex items-center justify-center gap-2 text-xs sm:text-sm font-medium text-white/70 sm:justify-start">
+                <Smartphone size={12} className="sm:size-[14px]" /> {profileForm.mobileNumber}
               </p>
             </div>
           </div>
 
-          <div className="flex gap-4 sm:gap-8">
-            <div className="text-center">
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/50">Total Orders</p>
-              <p className="text-2xl font-black">{stats.totalOrders}</p>
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-8 pt-6 lg:pt-0 border-t border-white/10 lg:border-0 w-full lg:w-auto">
+            <div className="text-center min-w-[70px]">
+              <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-white/50">Total Orders</p>
+              <p className="text-xl sm:text-2xl font-black">{stats.totalOrders}</p>
             </div>
-            <div className="h-10 w-px bg-white/10 self-center"></div>
-            <div className="text-center">
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/50">Reward Points</p>
-              <p className="text-2xl font-black">{stats.loyaltyPoints}</p>
+            <div className="h-8 sm:h-10 w-px bg-white/10 self-center"></div>
+            <div className="text-center min-w-[70px]">
+              <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-white/50">Reward Points</p>
+              <p className="text-xl sm:text-2xl font-black">{stats.loyaltyPoints}</p>
             </div>
-            <div className="h-10 w-px bg-white/10 self-center"></div>
-            <div className="text-center">
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/50">Member Since</p>
-              <p className="text-2xl font-black">2024</p>
+            <div className="h-8 sm:h-10 w-px bg-white/10 self-center hidden sm:block"></div>
+            <div className="text-center min-w-[70px]">
+              <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-white/50">Rank</p>
+              <p className="text-xl sm:text-2xl font-black">2024</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="grid gap-12 lg:grid-cols-[280px_1fr]">
-        {/* Sidebar Navigation */}
+        {/* Mobile Navigation - Horizontal Scroll */}
+        <div className="lg:hidden mb-10 overflow-x-auto scrollbar-hide -mx-4 px-4 bg-[var(--background)] sticky top-[72px] z-20 pt-2 pb-4">
+          <div className="flex gap-2 min-w-max">
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 rounded-xl px-5 py-3 text-xs font-black uppercase tracking-widest transition-all duration-300 border ${activeTab === tab.id ? 'bg-black text-white dark:bg-white dark:text-black border-transparent shadow-lg' : 'bg-white dark:bg-zinc-800 text-[var(--text-muted)] border-black/5 dark:border-white/5'}`}
+              >
+                <tab.icon size={14} />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Sidebar Navigation - Desktop only */}
         <aside className="hidden lg:block">
-          <nav className="glass-card rounded-[var(--radius-xl)] p-4 space-y-1 sticky top-32">
+          <nav className="glass-card rounded-[var(--radius-xl)] p-4 space-y-1 sticky top-32 border-black/5 dark:border-white/5">
             <p className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] opacity-50">Manage Account</p>
             {tabs.map(tab => (
               <button
@@ -378,7 +394,7 @@ function Profile() {
                   }
                 />
 
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                   <StatCard icon={PackageCheck} label="Past Orders" value={stats.totalOrders} trend="+12%" colorClass="bg-blue-500" />
                   <StatCard icon={Star} label="Loyalty Points" value={stats.loyaltyPoints} colorClass="bg-amber-500" />
                   <StatCard icon={MapPin} label="Saved Address" value={addresses.length} colorClass="bg-purple-500" />
@@ -386,7 +402,7 @@ function Profile() {
 
                 <div className="grid gap-8 lg:grid-cols-2 mt-12">
                   {/* Recent Order Preview */}
-                  <Card className="p-8 border-black/5 dark:border-white/5 shadow-xl glass-card overflow-hidden relative">
+                  <Card className="p-6 sm:p-8 border-black/5 dark:border-white/5 shadow-xl glass-card overflow-hidden relative">
                     <div className="absolute -right-8 -bottom-8 opacity-5 text-black dark:text-white rotate-12">
                       <Clock3 size={160} />
                     </div>
@@ -396,22 +412,22 @@ function Profile() {
                         <div className="space-y-4">
                           <div className="flex justify-between items-start">
                             <div>
-                              <h3 className="text-xl font-black">Order #{orders[0].id}</h3>
-                              <p className="text-xs font-bold text-[var(--text-muted)]">{new Date(orders[0].createdTs).toLocaleDateString()} • {orders[0].items?.length} Items</p>
+                              <h3 className="text-lg sm:text-xl font-black">Order #{orders[0].id}</h3>
+                              <p className="text-[10px] sm:text-xs font-bold text-[var(--text-muted)]">{new Date(orders[0].createdTs).toLocaleDateString()} • {orders[0].items?.length} Items</p>
                             </div>
-                            <Badge variant={orders[0].status === 'DELIVERED' ? 'success' : 'primary'}>{orders[0].status}</Badge>
+                            <Badge variant={orders[0].status === 'DELIVERED' ? 'success' : 'primary'} className="text-[8px] sm:text-[10px] uppercase font-black">{orders[0].status}</Badge>
                           </div>
-                          <div className="flex -space-x-4 overflow-hidden py-2">
+                          <div className="flex -space-x-3 sm:-space-x-4 overflow-hidden py-2">
                              {orders[0].items?.slice(0, 3).map((item, i) => (
-                               <img key={i} src={item.image} alt={item.itemName} className="inline-block h-12 w-12 rounded-full border-4 border-white dark:border-zinc-900 object-cover" />
+                               <img key={i} src={item.image} alt={item.itemName} className="inline-block h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 sm:border-4 border-white dark:border-zinc-900 object-cover" />
                              ))}
                              {orders[0].items?.length > 3 && (
-                               <div className="flex h-12 w-12 items-center justify-center rounded-full border-4 border-white dark:border-zinc-900 bg-gray-100 text-[10px] font-black">
+                               <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border-2 sm:border-4 border-white dark:border-zinc-900 bg-gray-100 text-[8px] sm:text-[10px] font-black">
                                  +{orders[0].items.length - 3}
                                </div>
                              )}
                           </div>
-                          <Button variant="secondary" size="sm" onClick={() => setActiveTab('orders')} className="w-full mt-2 font-black border-2 border-black/5">View All Orders</Button>
+                          <Button variant="secondary" size="sm" onClick={() => setActiveTab('orders')} className="w-full mt-2 font-black border border-black/5 dark:border-white/5 text-[10px] sm:text-xs">View All Orders</Button>
                         </div>
                       ) : (
                         <div className="text-center py-6">
@@ -430,7 +446,7 @@ function Profile() {
                   </Card>
 
                   {/* Primary Address */}
-                  <Card className="p-8 border-black/5 dark:border-white/5 shadow-xl glass-card overflow-hidden relative">
+                  <Card className="p-6 sm:p-8 border-black/5 dark:border-white/5 shadow-xl glass-card overflow-hidden relative">
                     <div className="absolute -right-8 -bottom-8 opacity-5 text-black dark:text-white -rotate-12">
                       <MapIcon size={160} />
                     </div>
@@ -439,18 +455,18 @@ function Profile() {
                       {stats.defaultAddress ? (
                          <div className="space-y-4">
                             <div className="flex items-center gap-3">
-                               <div className="p-2 rounded-xl bg-[var(--accent-soft)] text-[var(--accent-strong)]">
-                                  {stats.defaultAddress.addressType === 'Home' ? <Home size={20} /> : <Briefcase size={20} />}
+                               <div className="p-2 sm:p-2.5 rounded-xl bg-[var(--accent-soft)] text-[var(--accent-strong)]">
+                                  {stats.defaultAddress.addressType === 'Home' ? <Home size={18} className="sm:size-[20px]" /> : <Briefcase size={18} className="sm:size-[20px]" />}
                                </div>
                                <div>
-                                  <h3 className="font-black">{stats.defaultAddress.addressType || 'Home'}</h3>
-                                  <p className="text-[10px] font-black uppercase tracking-widest opacity-50">{stats.defaultAddress.recipientName}</p>
+                                  <h3 className="font-black text-sm sm:text-base">{stats.defaultAddress.addressType || 'Home'}</h3>
+                                  <p className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest opacity-50">{stats.defaultAddress.recipientName}</p>
                                </div>
                             </div>
-                            <p className="text-sm font-bold text-[var(--text-muted)] leading-relaxed italic">
-                               "{stats.defaultAddress.line1}, {stats.defaultAddress.city}"
+                            <p className="text-xs sm:text-sm font-bold text-[var(--text-muted)] leading-relaxed italic line-clamp-2">
+                               {stats.defaultAddress.line1}, {stats.defaultAddress.city}
                             </p>
-                            <Button variant="secondary" size="sm" onClick={() => setActiveTab('addresses')} className="w-full mt-2 font-black border-2 border-black/5">Manage Addresses</Button>
+                            <Button variant="secondary" size="sm" onClick={() => setActiveTab('addresses')} className="w-full mt-2 font-black border border-black/5 dark:border-white/5 text-[10px] sm:text-xs">Manage Addresses</Button>
                          </div>
                       ) : (
                         <div className="text-center py-6">
@@ -478,7 +494,7 @@ function Profile() {
                   subtitle="Update your name, contact details and identity settings."
                 />
 
-                <form onSubmit={handleProfileSubmit} className="max-w-3xl glass-card p-10 rounded-[var(--radius-xl)] space-y-8 border-black/5">
+                <form onSubmit={handleProfileSubmit} className="max-w-3xl glass-card p-6 sm:p-10 rounded-2xl sm:rounded-[var(--radius-xl)] space-y-6 sm:space-y-8 border-black/5 dark:border-white/5 shadow-xl">
                    <div className="grid gap-8 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Input 
@@ -519,21 +535,21 @@ function Profile() {
 
                    <hr className="border-black/5 dark:border-white/5" />
 
-                   <div className="flex items-center justify-between p-6 bg-[var(--surface-muted)] rounded-[var(--radius-lg)]">
+                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 bg-[var(--surface-muted)] rounded-2xl dark:bg-white/5">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-emerald-500/10 text-emerald-500 rounded-2xl">
-                          <CheckCircle2 size={24} />
+                        <div className="p-2 sm:p-3 bg-emerald-500/10 text-emerald-500 rounded-xl sm:rounded-2xl">
+                          <CheckCircle2 size={20} className="sm:size-[24px]" />
                         </div>
                         <div>
-                          <p className="font-black">Identity Verified</p>
-                          <p className="text-xs font-bold text-[var(--text-muted)]">Your account is fully secured and verified.</p>
+                          <p className="font-black text-sm sm:text-base">Identity Verified</p>
+                          <p className="text-[10px] sm:text-xs font-bold text-[var(--text-muted)]">Your account is fully secured and verified.</p>
                         </div>
                       </div>
-                      <Badge variant="success" className="px-4 py-2 font-black">VERIFIED</Badge>
+                      <Badge variant="success" className="w-fit px-3 py-1.5 sm:px-4 sm:py-2 font-black text-[9px] sm:text-xs">VERIFIED</Badge>
                    </div>
 
                    <div className="flex justify-end pt-4">
-                     <Button size="lg" className="px-12 py-7 text-lg shadow-xl premium-gradient text-white border-0" disabled={savingProfile}>
+                     <Button size="lg" className="w-full sm:w-auto sm:px-12 h-14 sm:h-auto sm:py-7 text-base sm:text-lg shadow-xl premium-gradient text-white border-0 font-black" disabled={savingProfile}>
                        {savingProfile ? 'Saving...' : 'Update Details'}
                      </Button>
                    </div>
@@ -572,7 +588,7 @@ function Profile() {
                            viewport={{ once: true }}
                            key={order.id}
                          >
-                           <Card className="p-8 border-black/5 shadow-xl glass-card hover:shadow-2xl transition-all group">
+                           <Card className="p-5 sm:p-8 border-black/5 dark:border-white/5 shadow-xl glass-card hover:shadow-2xl transition-all group">
                              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-black/5 dark:border-white/5">
                                <div className="flex items-center gap-5">
                                  <div className="h-16 w-16 rounded-3xl bg-[var(--accent-soft)] flex items-center justify-center text-[var(--accent-strong)]">
@@ -615,9 +631,9 @@ function Profile() {
 
                              <div className="pt-6 border-t border-black/5 dark:border-white/5 flex flex-col sm:flex-row justify-between gap-4">
                                 <p className="text-[10px] font-bold text-[var(--text-muted)] italic">"Traditional recipes, delivered with care."</p>
-                                <div className="flex gap-4">
-                                   <Button variant="secondary" size="sm" className="px-6 font-black border-2 border-black/5 hover:bg-black/5 transition-colors">Order Details</Button>
-                                   <Button size="sm" className="px-6 font-black premium-shadow bg-black text-white dark:bg-white dark:text-black">Reorder Items</Button>
+                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                                   <Button variant="secondary" size="sm" className="w-full sm:w-auto px-6 font-black border border-black/5 dark:border-white/5 hover:bg-black/5 transition-colors">Order Details</Button>
+                                   <Button size="sm" className="w-full sm:w-auto px-6 font-black premium-shadow bg-black text-white dark:bg-white dark:text-black">Reorder Items</Button>
                                 </div>
                              </div>
                            </Card>
@@ -648,14 +664,14 @@ function Profile() {
                           variant="primary" 
                           onClick={() => { setAddressForm(emptyAddress); setEditingId(null); setActiveTab('addresses-new'); }} 
                           icon={Plus} 
-                          className="font-black h-14 px-8 shadow-xl premium-gradient border-0 text-white"
+                          className="w-full sm:w-auto font-black h-14 px-8 shadow-xl premium-gradient border-0 text-white"
                         >
                           Add New Point
                         </Button>
                       }
                     />
 
-                    <div className="grid gap-8 sm:grid-cols-2">
+                      <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2">
                        {addresses.length === 0 ? (
                          <div className="col-span-full py-24 text-center glass-card border-none rounded-[var(--radius-xl)] shadow-lg">
                            <MapPin size={64} className="mx-auto mb-6 text-[var(--text-muted)] opacity-20" />
@@ -664,7 +680,7 @@ function Profile() {
                          </div>
                        ) : addresses.map(addr => (
                          <motion.div layout key={addr.id}>
-                           <Card className={`relative group p-8 space-y-6 shadow-xl glass-card transition-all hover:shadow-2xl border-2 ${addr.default ? 'border-[var(--accent-strong)]' : 'border-transparent'}`}>
+                           <Card className={`relative group p-5 sm:p-8 space-y-6 shadow-xl glass-card transition-all hover:shadow-2xl border-2 ${addr.default ? 'border-[var(--accent-strong)]' : 'border-black/5 dark:border-white/5'}`}>
                              {addr.default && (
                                <div className="absolute top-0 right-0 p-1">
                                   <Badge variant="primary" className="rounded-bl-xl rounded-tr-xl border-0 font-black px-4 py-2 bg-[var(--accent-strong)] text-white shadow-lg">DEFAULT</Badge>
@@ -731,17 +747,17 @@ function Profile() {
                       <span className="font-black text-sm uppercase tracking-widest">Back to List</span>
                     </button>
 
-                    <div className="glass-card rounded-[var(--radius-xl)] p-10 shadow-2xl border-black/5">
+                    <div className="glass-card rounded-2xl sm:rounded-[var(--radius-xl)] p-6 sm:p-10 shadow-huge border border-black/5 dark:border-white/5">
                         <SectionHeader 
                           title={editingId ? 'Edit Delivery Point' : 'Add New Location'} 
                           subtitle="Precision matters for prompt deliveries."
                         />
 
                         <form onSubmit={handleAddressSubmit} className="space-y-10 mt-8">
-                           <div className="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center p-6 bg-[var(--accent-soft)] rounded-3xl border border-[var(--accent-strong)]/10">
+                           <div className="flex flex-col md:flex-row justify-between gap-6 md:items-center p-5 sm:p-6 bg-[var(--surface-muted)] rounded-2xl sm:rounded-3xl border border-black/5 dark:border-white/5">
                               <div>
-                                <h4 className="font-black text-sm">Real-time Location</h4>
-                                <p className="text-[10px] font-bold text-[var(--accent-strong)]">Detect your coordinates for accuracy</p>
+                                <h4 className="font-black text-sm sm:text-base">Real-time Location</h4>
+                                <p className="text-[10px] sm:text-xs font-bold text-[var(--accent-strong)]">Detect your coordinates for accuracy</p>
                               </div>
                               <Button 
                                 type="button" 
@@ -749,7 +765,7 @@ function Profile() {
                                 loading={geolocating}
                                 onClick={handleUseLocation}
                                 icon={Navigation}
-                                className="h-14 px-8 font-black text-[11px] uppercase tracking-widest bg-[var(--accent-strong)] text-white shadow-lg border-0"
+                                className="h-12 sm:h-14 px-6 sm:px-8 font-black text-[10px] sm:text-[11px] uppercase tracking-widest bg-[var(--accent-strong)] text-white shadow-lg border-0"
                               >
                                 {geolocating ? 'Locating...' : 'Fetch My Location'}
                               </Button>
@@ -771,15 +787,15 @@ function Profile() {
 
                            <div className="space-y-4">
                               <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] opacity-60">Location Identity</p>
-                              <div className="flex flex-wrap gap-4">
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                                 {['Home', 'Work', 'Other'].map(type => (
                                   <button
                                     key={type}
                                     type="button"
                                     onClick={() => setAddressForm({...addressForm, addressType: type})}
-                                    className={`flex-1 flex items-center justify-center gap-3 px-8 py-5 rounded-[var(--radius-lg)] border-2 transition-all font-black text-sm ${addressForm.addressType === type ? 'border-black bg-black text-white shadow-xl scale-105' : 'border-black/5 hover:bg-black/5 text-[var(--text-muted)]'}`}
+                                    className={`flex items-center justify-center gap-3 px-6 py-4 rounded-xl sm:rounded-[var(--radius-lg)] border-2 transition-all font-black text-xs sm:text-sm ${addressForm.addressType === type ? 'border-orange-500 bg-orange-500/10 text-orange-600 shadow-sm' : 'border-black/5 dark:border-white/5 hover:bg-black/5 text-[var(--text-muted)] dark:bg-white/5'}`}
                                   >
-                                    {type === 'Home' ? <Home size={18} /> : type === 'Work' ? <Briefcase size={18} /> : <Navigation size={18} />}
+                                    {type === 'Home' ? <Home size={16} className="sm:size-[18px]" /> : type === 'Work' ? <Briefcase size={16} className="sm:size-[18px]" /> : <Navigation size={16} className="sm:size-[18px]" />}
                                     {type}
                                   </button>
                                 ))}

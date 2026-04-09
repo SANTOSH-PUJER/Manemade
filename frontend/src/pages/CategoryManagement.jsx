@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Search, Trash2, Edit2, ListTree } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import api from '../services/userService';
+import { categoryService } from '../services/dataService';
 import AdminLayout from '../components/layout/AdminLayout';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
@@ -21,7 +21,7 @@ export default function CategoryManagement() {
   const loadCategories = async () => {
     setLoading(true);
     try {
-      const resp = await api.get('/category/all');
+      const resp = await categoryService.getAll();
       setCategories(resp.data);
     } catch (err) {
       showToast({ title: 'Error', description: 'Failed to load categories.' });
@@ -49,10 +49,10 @@ export default function CategoryManagement() {
     e.preventDefault();
     try {
       if (editingCategory) {
-        await api.put(`/category/${editingCategory.id}`, newCategory);
+        await categoryService.update(editingCategory.id, newCategory);
         showToast({ title: 'Updated', description: 'Category modified.', tone: 'success' });
       } else {
-        await api.post('/category/create', newCategory);
+        await categoryService.create(newCategory);
         showToast({ title: 'Success', description: 'Category created.', tone: 'success' });
       }
       setIsModalOpen(false);
@@ -67,7 +67,7 @@ export default function CategoryManagement() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this category?')) return;
     try {
-      await api.delete(`/category/${id}`);
+      await categoryService.delete(id);
       showToast({ title: 'Deleted', description: 'Category removed.', tone: 'success' });
       loadCategories();
     } catch (err) {

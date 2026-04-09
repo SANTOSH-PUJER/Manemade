@@ -50,7 +50,7 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         order.setAddress(address);
-        order.setStatus("PLACED");
+        order.setStatus("PENDING");
         String paymentMode = normalizePaymentMode(request.getPaymentMode());
         order.setPaymentMode(paymentMode);
 
@@ -117,6 +117,23 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public OrderResponse cancelOrder(Long orderId, Long userId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (!order.getUser().getId().equals(userId)) {
+            throw new RuntimeException("You are not authorized to cancel this order");
+        }
+
+        if (!"PENDING".equals(order.getStatus())) {
+            throw new RuntimeException("Order cannot be cancelled as it is already " + order.getStatus().toLowerCase());
+        }
+
+        order.setStatus("CANCELLED");
+        return mapToResponse(orderRepository.save(order), null);
+    }
+
     public OrderResponse mapToResponse(Order order, Object paymentObj) {
         manemade.backend.dto.PaymentResponse payment = null;
         if (paymentObj instanceof manemade.backend.dto.PaymentResponse) {
@@ -138,15 +155,29 @@ public class OrderService {
                 .paymentStatus(payment != null ? payment.getStatus() : null)
                 .paymentId(payment != null ? payment.getId() : null)
                 .transactionId(order.getTransactionId())
+                .userName(order.getUser().getFirstName() + " " + order.getUser().getLastName())
+                .userMobile(order.getUser().getMobileNumber())
+                .deliveryAddress(formatAddress(order.getAddress()))
                 .createdTs(order.getCreatedTs())
                 .items(order.getItems().stream().map(this::mapToOrderItemResponse).collect(Collectors.toList()))
                 .build();
+    }
+
+    private String formatAddress(Address address) {
+        if (address == null) return "N/A";
+        StringBuilder sb = new StringBuilder();
+        if (address.getRecipientName() != null) sb.append(address.getRecipientName()).append(", ");
+        sb.append(address.getLine1());
+        if (address.getLine2() != null && !address.getLine2().isBlank()) sb.append(", ").append(address.getLine2());
+        sb.append(", ").append(address.getCity()).append(", ").append(address.getState()).append(" - ").append(address.getPincode());
+        return sb.toString();
     }
 
     public OrderResponse.OrderItemResponse mapToOrderItemResponse(OrderItem item) {
         return OrderResponse.OrderItemResponse.builder()
                 .itemId(item.getItem().getId())
                 .itemName(item.getItem().getItemName())
+                .attributeQuantity("Regular") // Default since not yet in DB
                 .quantity(item.getQuantity())
                 .price(item.getPrice())
                 .build();

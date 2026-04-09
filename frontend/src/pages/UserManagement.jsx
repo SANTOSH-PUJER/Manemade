@@ -6,7 +6,7 @@ import {
   ShoppingBag, Star, MoreHorizontal, XCircle
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import api from '../services/userService';
+import { adminService } from '../services/dataService';
 import AdminLayout from '../components/layout/AdminLayout';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
@@ -23,7 +23,7 @@ export default function UserManagement() {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const resp = await api.get('/admin/users');
+      const resp = await adminService.getAllUsers();
       setUsers(resp.data);
     } catch (err) {
       showToast({ title: 'Error', description: 'Failed to load users.' });
@@ -39,7 +39,7 @@ export default function UserManagement() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to deactivate this user?')) return;
     try {
-      await api.delete(`/admin/users/${id}`);
+      await adminService.deleteUser(id);
       showToast({ title: 'Deactivated', description: 'User account removed.', tone: 'success' });
       loadUsers();
     } catch (err) {
@@ -49,7 +49,7 @@ export default function UserManagement() {
 
   const updateRole = async (id, role) => {
     try {
-      await api.put(`/admin/users/${id}/role`, { role });
+      await adminService.updateUserRole(id, role);
       showToast({ title: 'Role Updated', description: `User promoted to ${role}.`, tone: 'success' });
       loadUsers();
     } catch (err) {

@@ -17,16 +17,16 @@ export default function PopularCarousel({ dishes }) {
   };
 
   return (
-    <section className="space-y-12 py-24 relative overflow-hidden">
+    <section className="space-y-8 sm:space-y-12 py-12 sm:py-24 relative overflow-hidden">
       {/* Background Accent */}
-      <div className="absolute top-0 right-0 h-[600px] w-[600px] rounded-full bg-[var(--accent-primary)]/5 blur-[120px] -z-10" />
+      <div className="absolute top-0 right-0 h-[400px] w-[400px] sm:h-[600px] sm:w-[600px] rounded-full bg-orange-500/5 blur-[80px] sm:blur-[120px] -z-10" />
 
-      <div className="flex items-end justify-between px-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between px-2 gap-6">
         <div className="space-y-2">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--accent-primary)]">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-orange-500">
             Most Loved Dishes
           </p>
-          <h2 className="font-display text-5xl font-black tracking-tight">
+          <h2 className="font-display text-3xl sm:text-5xl font-black tracking-tight">
             Popular Right Now
           </h2>
         </div>
@@ -53,7 +53,7 @@ export default function PopularCarousel({ dishes }) {
 
       <div
         ref={scrollRef}
-        className="no-scrollbar flex gap-10 overflow-x-auto scroll-smooth pb-16 pt-4 snap-x snap-mandatory px-2"
+        className="no-scrollbar flex gap-6 sm:gap-10 overflow-x-auto scroll-smooth pb-12 sm:pb-16 pt-4 snap-x snap-mandatory px-2"
       >
         {dishes.map((dish, i) => (
           <motion.div
@@ -62,7 +62,7 @@ export default function PopularCarousel({ dishes }) {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.05 }}
-            className="min-w-[340px] max-w-[340px] snap-center"
+            className="min-w-[280px] max-w-[280px] sm:min-w-[340px] sm:max-w-[340px] snap-center"
           >
             <Link to={`/dish/${dish.slug}`} className="block group h-full">
               <Card className="h-full flex flex-col border-[var(--border-light)] bg-[var(--surface)] transition-all duration-300 hover:shadow-[var(--shadow-lg)] group-hover:-translate-y-2" radius="xl">

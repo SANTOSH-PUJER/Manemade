@@ -19,12 +19,17 @@ export const categoryService = {
 
 export const adminService = {
   getStats: () => api.get('/admin/stats'),
-  getAllOrders: () => api.get('/order/all'),
+  getAllOrders: () => api.get('/admin/orders'),
+  getAllUsers: () => api.get('/admin/users'),
+  updateUserRole: (id, role) => api.put(`/admin/users/${id}/role`, { role }),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
+  updateOrderStatus: (id, status) => api.put(`/admin/orders/${id}/status`, { status }),
 };
 
 export const orderService = {
   placeOrder: (orderData) => api.post('/order/place', orderData),
   getUserOrders: (userId) => api.get(`/order/user/${userId}`),
+  cancelOrder: (orderId, userId) => api.put(`/order/${orderId}/cancel?userId=${userId}`),
 };
 
 export const cartService = {
